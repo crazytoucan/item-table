@@ -42,6 +42,7 @@ class Duratable implements IDuratable {
       this.render.schedule();
     });
 
+    this.resizeObserver.observe(s.containerElement);
     this.render.schedule();
   }
 

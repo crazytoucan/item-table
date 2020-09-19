@@ -1,8 +1,13 @@
 export function raf(cb: () => void) {
   let scheduled = 0;
+  const cbAndClear = () => {
+    scheduled = 0;
+    cb();
+  };
+
   const schedule = () => {
     if (scheduled === 0) {
-      scheduled = requestAnimationFrame(cb);
+      scheduled = requestAnimationFrame(cbAndClear);
     }
   };
 

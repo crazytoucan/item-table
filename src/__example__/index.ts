@@ -4,13 +4,22 @@ import { setStyle } from "../utils/htmlUtils";
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.createElement("div");
   setStyle(container, {
-    width: "300px",
-    height: "300px",
+    width: "100vw",
+    height: "100vh",
   });
 
   const table = createTable(container);
-  table.rows = ["0", "1", "2", "3"];
-  table.cols = ["a", "b", "c"];
+  const rows = [];
+  for (let i = 0; i < 100; i++) {
+    rows.push(String(i));
+  }
+
+  const cols = [];
+  for (let i = 0; i < 100; i++) {
+    cols.push(String(i));
+  }
+  table.rows = rows;
+  table.cols = cols;
   table.cellCallback = (row, col) => ({
     kind: "text",
     text: `${row}${col}xy`,
