@@ -1,5 +1,7 @@
+import { Rect } from "./Rect";
+
 export const COL_WIDTH_PX = 120;
-export const ROW_HEIGHT_PX = 18;
+export const ROW_HEIGHT_PX = 24;
 export const DEFAULT_THEME = {
   cellPaddingBottom: 4,
   cellPaddingLeft: 4,
@@ -18,3 +20,5 @@ export const DEFAULT_THEME = {
   fontString: "400 14px 'New York Medium'",
   lineHeight: 1.2,
 };
+
+export const EMPTY_RECT = new Rect(0, 0, 0, 0);

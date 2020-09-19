@@ -40,31 +40,14 @@ export interface ITheme {
   "text.fontWeight"?: number;
 }
 
-export interface IDuratableEventMap {
+export interface INimbleTableEventMap {
   "cell.dblclick": {
     row: string;
     col: string;
   };
 }
 
-export interface IDuratableEvent<K extends keyof IDuratableEventMap> {
+export interface IDuratableEvent<K extends keyof INimbleTableEventMap> {
   type: K;
-  data: IDuratableEventMap[K];
-}
-
-export interface IDuratable {
-  cellCallback: ICellCallback;
-  rows: string[];
-  cols: string[];
-
-  addListener<K extends keyof IDuratableEventMap>(
-    type: K,
-    cb: (evt: IDuratableEvent<K>) => void
-  ): void;
-  removeListener<K extends keyof IDuratableEventMap>(
-    type: K,
-    cb: (evt: IDuratableEvent<K>) => void
-  ): void;
-  flush(): void;
-  dispose(): void;
+  data: INimbleTableEventMap[K];
 }

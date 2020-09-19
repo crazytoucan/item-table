@@ -1,4 +1,4 @@
-import { createTable as createTable } from "../duratable";
+import { NimbleTable } from "../NimbleTable";
 import { setStyle } from "../utils/htmlUtils";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,7 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
     height: "100vh",
   });
 
-  const table = createTable(container);
+  const table = new NimbleTable({
+    element: container,
+    cellCallback: (row, col) => ({
+      kind: "text",
+      text: `${row}${col}xy`,
+    }),
+  });
+
   const rows = [];
   for (let i = 0; i < 100; i++) {
     rows.push(String(i));
@@ -18,12 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < 10; i++) {
     cols.push(String(i));
   }
+
   table.rows = rows;
   table.cols = cols;
-  table.cellCallback = (row, col) => ({
-    kind: "text",
-    text: `${row}${col}xy`,
-  });
 
   document.body.appendChild(container);
+  table.start();
 });

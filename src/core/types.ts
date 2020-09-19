@@ -1,10 +1,12 @@
 import { IFontMetrics } from "fontmetrics";
 import { ICellCallback } from "../types";
-import { DEFAULT_THEME } from './const';
+import { Cell } from "./Cell";
+import { DEFAULT_THEME } from "./const";
 
 export interface IState {
-  canvas: HTMLCanvasElement;
-  cell: ICellCallback;
+  canvasElement: HTMLCanvasElement;
+  canvasContainerElement: HTMLElement;
+  cellCallback: ICellCallback;
   cols: string[];
   containerElement: HTMLElement;
   containerHeight: number;
@@ -16,7 +18,17 @@ export interface IState {
   modelWidth: number;
   pixelRatio: number;
   rows: string[];
-  scrollX: number;
-  scrollY: number;
+  scrollLeft: number;
+  scrollTop: number;
   theme: typeof DEFAULT_THEME;
+}
+
+export interface IRenderContext {
+  ctx: CanvasRenderingContext2D;
+  pixelRatio: number;
+}
+
+export interface IRenderer {
+  cellKind: string;
+  render(cells: Cell[], context: IRenderContext): void;
 }
