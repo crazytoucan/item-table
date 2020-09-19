@@ -1,3 +1,4 @@
+import FontMetrics from "fontmetrics";
 import { DEFAULT_THEME } from "./core/const";
 import { IState } from "./core/types";
 import { renderCanvas } from "./graphics/renderCanvas";
@@ -26,6 +27,11 @@ class Duratable implements IDuratable {
       scrollX: 0,
       scrollY: 0,
       theme: DEFAULT_THEME,
+      fontMetrics: FontMetrics({
+        fontFamily: DEFAULT_THEME.fontFamily,
+        fontSize: DEFAULT_THEME.fontSize,
+        fontWeight: DEFAULT_THEME.fontWeight,
+      }),
     };
   }
 
@@ -104,7 +110,7 @@ class Duratable implements IDuratable {
   });
 }
 
-export function createDuratable(element: HTMLElement) {
+export function createTable(element: HTMLElement) {
   const duratable = new Duratable(element);
   duratable.initialize();
   return duratable;

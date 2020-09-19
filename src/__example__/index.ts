@@ -1,4 +1,4 @@
-import { createDuratable } from "../duratable";
+import { createTable as createTable } from "../duratable";
 import { setStyle } from "../utils/htmlUtils";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     height: "300px",
   });
 
-  const table = createDuratable(container);
+  const table = createTable(container);
   table.rows = ["0", "1", "2", "3"];
   table.cols = ["a", "b", "c"];
   table.cellCallback = (row, col) => ({

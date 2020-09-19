@@ -1,17 +1,22 @@
+import { IFontMetrics } from "fontmetrics";
 import { ICellCallback } from "../types";
 
 export interface ICompiledTheme {
-  "cell.padding": [number, number, number, number];
-  "colheader.background": string;
-  "colheader.foreground": string;
-  "core.evenBackground": string;
-  "core.evenForeground": string;
-  "core.gridline": string;
-  "core.oddBackground": string;
-  "core.oddForeground": string;
-  "text.fontFamily": string;
-  "text.fontSize": number;
-  "text.fontWeight": number;
+  cellPaddingTop: number;
+  cellPaddingLeft: number;
+  cellPaddingBottom: number;
+  cellPaddingRight: number;
+  colheaderBackground: string;
+  colheaderForeground: string;
+  rowEvenBackground: string;
+  rowEvenForeground: string;
+  gridline: string;
+  rowOddBackground: string;
+  rowOddForeground: string;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: number;
+  lineHeight: number;
 }
 
 export interface IState {
@@ -22,6 +27,7 @@ export interface IState {
   containerHeight: number;
   containerWidth: number;
   ctx: CanvasRenderingContext2D | null;
+  fontMetrics: IFontMetrics;
   modelHeight: number;
   modelWidth: number;
   pixelRatio: number;
