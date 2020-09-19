@@ -18,5 +18,6 @@ declare module "fontmetrics" {
     // Optional (defaults)
     fontWeight?: string | number;
     fontSize?: number;
+    origin?: keyof IFontMetrics;
   }): IFontMetrics;
 }

@@ -1,5 +1,5 @@
 import FontMetrics from "fontmetrics";
-import { DEFAULT_THEME } from "./core/const";
+import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "./core/const";
 import { IState } from "./core/types";
 import { renderCanvas } from "./graphics/renderCanvas";
 import { ICellCallback, IDuratable } from "./types";
@@ -12,6 +12,17 @@ class Duratable implements IDuratable {
 
   constructor(containerElement: HTMLElement) {
     const canvas = document.createElement("canvas");
+    const scrollContentElement = document.createElement("div");
+    setStyle(scrollContentElement, {
+      pointerEvents: "none",
+    });
+
+    setStyle(canvas, {
+      position: "sticky",
+      left: "0",
+      top: "0",
+    });
+
     this.state = {
       canvas,
       cell: () => ({ kind: "blank" }),
@@ -24,6 +35,7 @@ class Duratable implements IDuratable {
       modelWidth: 0,
       pixelRatio: 0,
       rows: [],
+      scrollContentElement,
       scrollX: 0,
       scrollY: 0,
       theme: DEFAULT_THEME,
@@ -31,13 +43,20 @@ class Duratable implements IDuratable {
         fontFamily: DEFAULT_THEME.fontFamily,
         fontSize: DEFAULT_THEME.fontSize,
         fontWeight: DEFAULT_THEME.fontWeight,
+        origin: "top",
       }),
     };
   }
 
   public initialize() {
     const s = this.state;
+    setStyle(s.containerElement, {
+      overflow: "auto",
+      position: "relative",
+    });
+
     s.containerElement.appendChild(s.canvas);
+    s.containerElement.appendChild(s.scrollContentElement);
     this.resizeObserver = new ResizeObserver(() => {
       this.render.schedule();
     });
@@ -84,6 +103,10 @@ class Duratable implements IDuratable {
     s.containerWidth = s.containerElement.clientWidth;
     s.containerHeight = s.containerElement.clientHeight;
     s.pixelRatio = devicePixelRatio;
+    setStyle(s.scrollContentElement, {
+      width: `${COL_WIDTH_PX * s.cols.length}px`,
+      height: `${ROW_HEIGHT_PX * s.rows.length}px`,
+    });
 
     const physicalWidth = s.containerWidth * s.pixelRatio;
     const physicalHeight = s.containerHeight * s.pixelRatio;

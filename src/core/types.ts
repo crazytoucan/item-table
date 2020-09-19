@@ -9,6 +9,7 @@ export interface IState {
   containerElement: HTMLElement;
   containerHeight: number;
   containerWidth: number;
+  scrollContentElement: HTMLElement;
   ctx: CanvasRenderingContext2D | null;
   fontMetrics: IFontMetrics;
   modelHeight: number;
