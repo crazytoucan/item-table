@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   table.cols = ["a", "b", "c"];
   table.cellCallback = (row, col) => ({
     kind: "text",
-    text: `${row}${col}`,
+    text: `${row}${col}xy`,
   });
 
   document.body.appendChild(container);
