@@ -1,19 +1,18 @@
-import { ICompiledTheme } from "./types";
-
-export const DEFAULT_THEME: ICompiledTheme = {
+export const DEFAULT_THEME = {
   cellPaddingBottom: 2,
   cellPaddingLeft: 4,
   cellPaddingRight: 4,
   cellPaddingTop: 2,
-  colheaderBackground: "#fff",
-  colheaderForeground: "#000",
-  rowEvenBackground: "#f0f0f0",
-  rowEvenForeground: "#000",
+  colheaderBackground: "#363636",
+  colheaderForeground: "#ccc",
+  rowEvenBackground: "#2c2c2c",
+  rowEvenForeground: "#ccc",
   gridline: "#aaa",
-  rowOddBackground: "#e2e2e2",
-  rowOddForeground: "#000",
-  fontFamily: "Calibri",
-  fontSize: 13,
+  rowOddBackground: "#242424",
+  rowOddForeground: "#ccc",
+  fontFamily: "New York Medium",
+  fontSize: 14,
   fontWeight: 400,
+  fontString: "400 14px 'New York Medium'",
   lineHeight: 1.42,
 };

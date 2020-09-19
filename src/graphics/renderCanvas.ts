@@ -26,8 +26,8 @@ export function renderCanvas(s: IState) {
   for (let r = 0; r < s.rows.length; r++) {
     for (let c = 0; c < s.cols.length; c++) {
       const x = COL_WIDTH_PX * c + s.theme.cellPaddingLeft;
-      const fontBox = s.fontMetrics.bottom - s.fontMetrics.top;
-      const baseline = r * rowHeight + s.theme.cellPaddingTop + 0.5 * fontBox * s.theme.fontSize;
+      const lineOffset = s.theme.fontSize * (-s.fontMetrics.top + 0.5 * (s.theme.lineHeight - 1));
+      const baseline = r * rowHeight + s.theme.cellPaddingTop + lineOffset;
       const cell = s.cell(s.rows[r], s.cols[c]);
       const foreground = parity(
         r,
@@ -47,7 +47,8 @@ export function renderCanvas(s: IState) {
         case "text":
           ctx.textBaseline = "alphabetic";
           ctx.fillStyle = foreground;
-          ctx.fillText(cell.text, x, baseline + 6);
+          ctx.font = s.theme.fontString;
+          ctx.fillText(cell.text, x, baseline);
           break;
       }
     }

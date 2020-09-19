@@ -1,23 +1,6 @@
 import { IFontMetrics } from "fontmetrics";
 import { ICellCallback } from "../types";
-
-export interface ICompiledTheme {
-  cellPaddingTop: number;
-  cellPaddingLeft: number;
-  cellPaddingBottom: number;
-  cellPaddingRight: number;
-  colheaderBackground: string;
-  colheaderForeground: string;
-  rowEvenBackground: string;
-  rowEvenForeground: string;
-  gridline: string;
-  rowOddBackground: string;
-  rowOddForeground: string;
-  fontFamily: string;
-  fontSize: number;
-  fontWeight: number;
-  lineHeight: number;
-}
+import { DEFAULT_THEME } from './const';
 
 export interface IState {
   canvas: HTMLCanvasElement;
@@ -34,5 +17,5 @@ export interface IState {
   rows: string[];
   scrollX: number;
   scrollY: number;
-  theme: ICompiledTheme;
+  theme: typeof DEFAULT_THEME;
 }
