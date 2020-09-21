@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setStyle(container, {
     width: "100vw",
     height: "100vh",
+    overflow: "auto",
+    position: "relative",
   });
 
   const table = new NimbleTable({

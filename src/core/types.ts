@@ -1,26 +1,30 @@
-import { IFontMetrics } from "fontmetrics";
 import { ICellCallback } from "../types";
+import { Hook } from "../utils/Hook";
 import { Cell } from "./Cell";
-import { DEFAULT_THEME } from "./const";
 
-export interface IState {
-  canvasElement: HTMLCanvasElement;
-  canvasContainerElement: HTMLElement;
-  cellCallback: ICellCallback;
-  cols: string[];
-  containerElement: HTMLElement;
-  containerHeight: number;
-  containerWidth: number;
-  scrollContentElement: HTMLElement;
-  ctx: CanvasRenderingContext2D | null;
-  fontMetrics: IFontMetrics;
-  modelHeight: number;
-  modelWidth: number;
-  pixelRatio: number;
-  rows: string[];
-  scrollLeft: number;
-  scrollTop: number;
-  theme: typeof DEFAULT_THEME;
+export class TableCore {
+  constructor(public containerElement: HTMLElement, public markRender: () => void) {}
+
+  public canvasElement = document.createElement("canvas");
+  public canvasContainerElement = document.createElement("div");
+  public cellCallback: ICellCallback = () => ({ kind: "blank" });
+  public cols: string[] = [];
+  public containerHeight = 0;
+  public containerWidth = 0;
+  public scrollContentElement = document.createElement("div");
+  public ctx: CanvasRenderingContext2D | null = null;
+  public modelHeight = 0;
+  public modelWidth = 0;
+  public pixelRatio = 0;
+  public rows: string[] = [];
+  public scrollLeft = 0;
+  public scrollTop = 0;
+
+  public onCanvasInvalidated = new Hook();
+  public onDispose = new Hook();
+  public onResize = new Hook();
+  public onRender = new Hook();
+  public onStart = new Hook();
 }
 
 export interface IRenderContext {
