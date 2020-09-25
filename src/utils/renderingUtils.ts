@@ -16,6 +16,11 @@ export function rectIntersect(a: Rect, b: Rect): Rect {
   return rectFromExtent(left, top, right, bottom);
 }
 
+
+export function rectTranslate(rect: Rect, tx: number, ty: number): Rect {
+  return new Rect(rect.left + tx, rect.top + ty, rect.width, rect.height);
+}
+
 export function rectIntersects(a: Rect, b: Rect) {
   const intersect = rectIntersect(a, b);
   return intersect.width > 0 && intersect.height > 0;

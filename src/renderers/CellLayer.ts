@@ -3,35 +3,61 @@ import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
 import { Rect } from "../core/Rect";
 import { ILayer, TableCore } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
-import { parity, rectContains, rectFromExtent } from "../utils/renderingUtils";
+import { clamp } from "../utils/numberUtils";
+import {
+  parity,
+  rectContains,
+  rectFromExtent,
+  rectIntersect,
+  rectTranslate,
+} from "../utils/renderingUtils";
 
 export class CellLayer implements ILayer {
   public render(core: TableCore, source: Rect, clean: Rect) {
     const { ctx, cellCallback, pixelRatio, rows, cols, cellRenderers } = core;
     assertNonNullishDEV(ctx);
 
-    const minRow = Math.max(0, Math.floor(source.top / pixelRatio / ROW_HEIGHT_PX));
-    const maxRow = Math.min(
-      rows.length - 1,
-      Math.ceil((source.top + source.height - 1) / pixelRatio / ROW_HEIGHT_PX),
+    const cellsStartTop = ROW_HEIGHT_PX * pixelRatio;
+    const cellsSource = rectIntersect(
+      rectTranslate(source, 0, -cellsStartTop),
+      new Rect(0, 0, Infinity, Infinity),
     );
 
-    const minCol = Math.floor(source.left / pixelRatio / COL_WIDTH_PX);
-    const maxCol = Math.min(
+    const minRow = clamp(
+      Math.floor(cellsSource.top / pixelRatio / ROW_HEIGHT_PX),
+      0,
+      rows.length - 1,
+    );
+
+    const maxRow = clamp(
+      Math.ceil((cellsSource.top + cellsSource.height - 1) / pixelRatio / ROW_HEIGHT_PX),
+      0,
+      rows.length - 1,
+    );
+
+    const minCol = clamp(
+      Math.floor(cellsSource.left / pixelRatio / COL_WIDTH_PX),
+      0,
       cols.length - 1,
-      Math.ceil((source.left + source.width - 1) / pixelRatio / COL_WIDTH_PX),
+    );
+
+    const maxCol = clamp(
+      Math.ceil((cellsSource.left + cellsSource.width - 1) / pixelRatio / COL_WIDTH_PX),
+      0,
+      cols.length - 1,
     );
 
     const cells = [];
+    ctx.save();
     for (let r = minRow; r <= maxRow; r++) {
       ctx.fillStyle = parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
 
       for (let c = minCol; c <= maxCol; c++) {
         const cellRect = rectFromExtent(
           Math.floor(pixelRatio * c * COL_WIDTH_PX),
-          Math.floor(pixelRatio * r * ROW_HEIGHT_PX),
+          cellsStartTop + Math.floor(pixelRatio * r * ROW_HEIGHT_PX),
           Math.floor(pixelRatio * (c + 1) * COL_WIDTH_PX),
-          Math.floor(pixelRatio * (r + 1) * ROW_HEIGHT_PX),
+          cellsStartTop + Math.floor(pixelRatio * (r + 1) * ROW_HEIGHT_PX),
         );
 
         if (!rectContains(clean, cellRect)) {
@@ -41,6 +67,7 @@ export class CellLayer implements ILayer {
       }
     }
 
+    ctx.translate(0, cellsStartTop);
     for (const renderer of cellRenderers) {
       try {
         renderer.render(
