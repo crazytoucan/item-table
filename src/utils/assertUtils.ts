@@ -5,3 +5,9 @@ export function assertNonNullishDEV<T>(
     throw new Error();
   }
 }
+
+export function assertEqualsDEV<T>(a: T, b: T) {
+  if (a !== b) {
+    throw new Error();
+  }
+}

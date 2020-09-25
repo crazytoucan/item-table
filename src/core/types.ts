@@ -1,6 +1,8 @@
+import { TextCellRenderer } from "../cellRenderers/TextCellRenderer";
 import { ICellCallback } from "../types";
 import { Hook } from "../utils/Hook";
 import { Cell } from "./Cell";
+import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
 
 export class TableCore {
   constructor(public containerElement: HTMLElement, public markDirty: () => void) {}
@@ -16,6 +18,7 @@ export class TableCore {
   public modelHeight = 0;
   public modelWidth = 0;
   public pixelRatio = 0;
+  public renderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
   public rows: string[] = [];
   public scrollLeft = 0;
   public scrollTop = 0;
