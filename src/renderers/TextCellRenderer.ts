@@ -1,11 +1,11 @@
 import { IFontMetrics } from "fontmetrics";
 import { Cell } from "../core/Cell";
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { IRenderContext, IRenderer } from "../core/types";
+import { IRenderContext, ICellRenderer } from "../core/types";
 import { ICell_Text } from "../types";
 import { parity } from "../utils/renderingUtils";
 
-export class TextCellRenderer implements IRenderer {
+export class TextCellRenderer implements ICellRenderer {
   public cellKind = "text" as const;
   constructor(private theme: typeof DEFAULT_THEME, private fontMetrics: IFontMetrics) {}
 

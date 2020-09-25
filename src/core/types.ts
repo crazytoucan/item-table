@@ -1,8 +1,11 @@
-import { TextCellRenderer } from "../cellRenderers/TextCellRenderer";
+import { CellLayer } from "../renderers/CellLayer";
+import { ColHeaderLayer } from "../renderers/ColHeaderLayer";
+import { TextCellRenderer } from "../renderers/TextCellRenderer";
 import { ICellCallback } from "../types";
 import { Hook } from "../utils/Hook";
 import { Cell } from "./Cell";
 import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
+import { Rect } from "./Rect";
 
 export class TableCore {
   constructor(public containerElement: HTMLElement, public markDirty: () => void) {}
@@ -18,7 +21,9 @@ export class TableCore {
   public modelHeight = 0;
   public modelWidth = 0;
   public pixelRatio = 0;
-  public renderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
+  public cellRenderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
+  public layers: ILayer[] = [new CellLayer(), new ColHeaderLayer()];
+
   public rows: string[] = [];
   public scrollLeft = 0;
   public scrollTop = 0;
@@ -36,7 +41,11 @@ export interface IRenderContext {
   pixelRatio: number;
 }
 
-export interface IRenderer {
+export interface ILayer {
+  render(core: TableCore, source: Rect, clean: Rect): void;
+}
+
+export interface ICellRenderer {
   cellKind: string;
   render(cells: Cell[], context: IRenderContext): void;
 }

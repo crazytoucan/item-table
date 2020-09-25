@@ -9,10 +9,15 @@ export function renderModule(core: TableCore) {
   });
 
   core.onRender.add(() => {
-    const { scrollLeft, canvasElement, scrollTop, containerWidth, containerHeight } = core;
+    const { scrollLeft, canvasElement, scrollTop, pixelRatio } = core;
 
     pane.draw(
-      new Rect(scrollLeft, scrollTop, containerWidth, containerHeight),
+      new Rect(
+        scrollLeft * pixelRatio,
+        scrollTop * pixelRatio,
+        canvasElement.width,
+        canvasElement.height,
+      ),
       new Rect(0, 0, canvasElement.width, canvasElement.height),
     );
   });
