@@ -1,12 +1,20 @@
 {
   "name": "item-table",
+  "typings": "",
+  "module": "esm/item-table.js",
   "scripts": {
+    "build": "yarn build:js && yarn build:dts",
+    "build:js": "esbuild --bundle --format=esm --outfile=esm/item-table.js src/index.ts",
+    "build:dts": "tsc --emitDeclarationOnly",
+    "clean": "rm -rf esm",
     "dev": "parcel src/__example__/index.html",
-    "lint": "tslint --project tsconfig.json"
+    "lint": "tslint --project tsconfig.json",
+    "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.3",
     "@types/resize-observer-browser": "^0.1.3",
+    "esbuild": "^0.7.5",
     "fontmetrics": "^1.0.0",
     "lodash-es": "^4.17.15",
     "node-sass": "^4.14.1",

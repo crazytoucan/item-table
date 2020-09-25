@@ -47,7 +47,7 @@ export interface IItemTableEventMap {
   };
 }
 
-export interface IDuratableEvent<K extends keyof IItemTableEventMap> {
+export interface IItemTableEvent<K extends keyof IItemTableEventMap> {
   type: K;
   data: IItemTableEventMap[K];
 }
