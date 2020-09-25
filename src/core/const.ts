@@ -2,24 +2,25 @@ import FontMetrics from "fontmetrics";
 import { Rect } from "./Rect";
 
 export const COL_WIDTH_PX = 120;
-export const ROW_HEIGHT_PX = 24;
+export const ROW_HEIGHT_PX = 19;
 export const DEFAULT_THEME = {
-  cellPaddingBottom: 4,
+  cellPaddingBottom: 3,
   cellPaddingLeft: 10,
   cellPaddingRight: 10,
-  cellPaddingTop: 4,
+  cellPaddingTop: 3,
   colheaderBackground: "#2b2c2e",
   colheaderForeground: "#ccc",
   rowEvenBackground: "#292a2c",
   rowEvenForeground: "#dedede",
+  selectionColor: "#0457d0",
   gridline: "#444",
   rowOddBackground: "#1e1f22",
   rowOddForeground: "#dedede",
-  fontFamily: "New York Medium",
-  fontSize: 14,
+  fontFamily: "system-ui",
+  fontSize: 11,
   fontWeight: 400,
-  fontString: "400 14px 'New York Medium'",
-  lineHeight: 1.2,
+  fontString: "400 12px 'system-ui'",
+  lineHeight: 1.15,
 };
 
 export const DEFAULT_FONT_METRICS = FontMetrics({

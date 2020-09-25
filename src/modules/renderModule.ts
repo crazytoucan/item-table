@@ -7,7 +7,7 @@ export function renderModule(core: TableCore) {
   const pane_NE = new Pane(core);
   const pane_SE = new Pane(core);
 
-  core.onCanvasInvalidated.add(() => {
+  core.onInvalidate.add(() => {
     pane_NE.invalidate();
     pane_SE.invalidate();
   });

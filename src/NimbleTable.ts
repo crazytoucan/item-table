@@ -14,7 +14,7 @@ export class NimbleTable {
   private core: TableCore;
 
   constructor({ cellCallback, element }: INimbleTableOptions) {
-    this.core = new TableCore(element, this.render.schedule);
+    this.core = new TableCore(element, this.render.schedule, this.render.flush);
     this.core.cellCallback = cellCallback;
   }
 

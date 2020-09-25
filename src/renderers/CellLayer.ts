@@ -30,7 +30,7 @@ export class CellLayer implements ILayer {
     );
 
     const maxRow = clamp(
-      Math.ceil((cellsSource.top + cellsSource.height - 1) / pixelRatio / ROW_HEIGHT_PX),
+      Math.ceil((cellsSource.bottom - 1) / pixelRatio / ROW_HEIGHT_PX),
       0,
       rows.length - 1,
     );
@@ -42,7 +42,7 @@ export class CellLayer implements ILayer {
     );
 
     const maxCol = clamp(
-      Math.ceil((cellsSource.left + cellsSource.width - 1) / pixelRatio / COL_WIDTH_PX),
+      Math.ceil((cellsSource.right - 1) / pixelRatio / COL_WIDTH_PX),
       0,
       cols.length - 1,
     );
@@ -50,8 +50,6 @@ export class CellLayer implements ILayer {
     const cells = [];
     ctx.save();
     for (let r = minRow; r <= maxRow; r++) {
-      ctx.fillStyle = parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
-
       for (let c = minCol; c <= maxCol; c++) {
         const cellRect = rectFromExtent(
           Math.floor(pixelRatio * c * COL_WIDTH_PX),
@@ -61,6 +59,11 @@ export class CellLayer implements ILayer {
         );
 
         if (!rectContains(clean, cellRect)) {
+          const selected = core.selection.has(r);
+          ctx.fillStyle = selected
+            ? DEFAULT_THEME.selectionColor
+            : parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
+
           ctx.fillRect(cellRect.left, cellRect.top, cellRect.width, cellRect.height);
           cells.push(new Cell(r, c, cellCallback(rows[r], cols[c])));
         }

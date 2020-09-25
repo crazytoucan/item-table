@@ -14,17 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
     element: container,
     cellCallback: (row, col) => ({
       kind: "text",
-      text: `${row}${col}xy`,
+      text: `c${row}_${col}.txt`,
     }),
   });
 
   const rows = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10000; i++) {
     rows.push(String(i));
   }
 
   const cols = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     cols.push(String(i));
   }
 

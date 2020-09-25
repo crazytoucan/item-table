@@ -16,7 +16,7 @@ export class ColHeaderLayer implements ILayer {
 
     const minCol = clamp(Math.floor(source.left / pixelRatio / COL_WIDTH_PX), 0, cols.length - 1);
     const maxCol = clamp(
-      Math.ceil((source.left + source.width - 1) / pixelRatio / COL_WIDTH_PX),
+      Math.ceil((source.right - 1) / pixelRatio / COL_WIDTH_PX),
       0,
       cols.length - 1,
     );
@@ -36,8 +36,8 @@ export class ColHeaderLayer implements ILayer {
       ctx.fillStyle = DEFAULT_THEME.colheaderBackground;
       ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
       ctx.fillStyle = DEFAULT_THEME.gridline;
-      ctx.fillRect(rect.left + rect.width - 2, 6, 2, 36);
-      ctx.fillRect(rect.left, rect.top + rect.height - 1, rect.width, 1);
+      ctx.fillRect(rect.right - 2, 3 * pixelRatio, 2, (ROW_HEIGHT_PX - 6) * pixelRatio);
+      ctx.fillRect(rect.left, rect.bottom - 1, rect.width, 1);
       ctx.fillStyle = DEFAULT_THEME.colheaderForeground;
       ctx.fillText(String(col), rect.left + 24, 10);
     }

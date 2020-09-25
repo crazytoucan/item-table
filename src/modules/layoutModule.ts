@@ -9,6 +9,27 @@ export function layoutModule(core: TableCore) {
     core.markDirty();
   });
 
+  setStyle(contentElement, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+  });
+
+  setStyle(canvasContainerElement, {
+    position: "sticky",
+    left: "0",
+    top: "0",
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+  });
+
+  setStyle(canvasElement, {
+    pointerEvents: "none",
+  });
+
+  canvasContainerElement.appendChild(canvasElement);
+
   function onScroll() {
     core.scrollLeft = containerElement.scrollLeft;
     core.scrollTop = containerElement.scrollTop;
@@ -16,28 +37,10 @@ export function layoutModule(core: TableCore) {
   }
 
   core.onStart.add(() => {
-    canvasContainerElement.appendChild(canvasElement);
+    containerElement.addEventListener("scroll", onScroll);
     observer.observe(containerElement);
     containerElement.appendChild(canvasContainerElement);
     containerElement.appendChild(contentElement);
-
-    setStyle(contentElement, {
-      position: "absolute",
-      top: "0",
-      left: "0",
-      pointerEvents: "none",
-    });
-
-    setStyle(canvasContainerElement, {
-      position: "sticky",
-      left: "0",
-      top: "0",
-      width: "100%",
-      height: "100%",
-      overflow: "hidden",
-    });
-
-    containerElement.addEventListener("scroll", onScroll);
   });
 
   core.onBeforeRender.add(() => {
@@ -65,18 +68,17 @@ export function layoutModule(core: TableCore) {
       });
 
       core.ctx = null;
-      core.onCanvasInvalidated.emit();
+      core.onInvalidate.emit();
     }
 
     if (core.ctx === null) {
-      core.ctx = core.canvasElement.getContext("2d");
+      core.ctx = core.canvasElement.getContext("2d", { alpha: false });
     }
   });
 
   core.onDispose.add(() => {
-    const { canvasContainerElement, contentElement: scrollContentElement } = core;
     canvasContainerElement.remove();
-    scrollContentElement.remove();
+    contentElement.remove();
     observer.disconnect();
     containerElement.removeEventListener("scroll", onScroll);
   });

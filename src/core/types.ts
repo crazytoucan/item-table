@@ -8,7 +8,7 @@ import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
 import { Rect } from "./Rect";
 
 export class TableCore {
-  constructor(public containerElement: HTMLElement, public markDirty: () => void) {}
+  constructor(public containerElement: HTMLElement, public markDirty: () => void, public flush: () => void) {}
 
   public canvasElement = document.createElement("canvas");
   public canvasContainerElement = document.createElement("div");
@@ -23,12 +23,13 @@ export class TableCore {
   public pixelRatio = 0;
   public cellRenderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
   public layers: ILayer[] = [new CellLayer(), new ColHeaderLayer()];
+  public selection = new Set<number>([3]);
 
   public rows: string[] = [];
   public scrollLeft = 0;
   public scrollTop = 0;
 
-  public onCanvasInvalidated = new Hook();
+  public onInvalidate = new Hook();
   public onDispose = new Hook();
   public onResize = new Hook();
   public onBeforeRender = new Hook();
