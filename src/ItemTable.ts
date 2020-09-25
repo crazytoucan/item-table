@@ -1,8 +1,8 @@
 import { TableState } from "./core/types";
-import { layoutModule } from "./modules/layoutModule";
-import { mouseModule } from "./modules/mouseModule";
-import { renderModule } from "./modules/renderModule";
-import { schedulingModule } from "./modules/schedulingModule";
+import { layoutModule } from "./core/layoutModule";
+import { mouseModule } from "./core/mouseModule";
+import { renderModule } from "./core/renderModule";
+import { schedulingModule } from "./core/schedulingModule";
 import { ICellCallback } from "./types";
 
 export interface IItemTableOptions<TROW, TCOL> {

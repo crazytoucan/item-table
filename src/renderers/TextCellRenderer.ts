@@ -1,7 +1,6 @@
 import { IFontMetrics } from "fontmetrics";
-import { Cell } from "../core/Cell";
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { IRenderContext, ICellRenderer } from "../core/types";
+import { Cell, ICellRenderer, IRenderContext } from "../core/types";
 import { ICell_Text } from "../types";
 import { parity } from "../utils/renderingUtils";
 

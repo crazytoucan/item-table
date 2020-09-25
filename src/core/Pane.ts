@@ -1,4 +1,4 @@
-import { Rect, TableState } from "../core/types";
+import { Rect, TableState } from "./types";
 import { assertEqualsDEV, assertNonNullishDEV } from "../utils/assertUtils";
 import { rectEmpty, rectIntersect } from "../utils/renderingUtils";
 

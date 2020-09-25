@@ -1,5 +1,5 @@
-import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "../core/const";
-import { TableState } from "../core/types";
+import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "./const";
+import { TableState } from "./types";
 
 export function mouseModule(table: TableState) {
   const { contentElement } = table;

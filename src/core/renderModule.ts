@@ -1,5 +1,5 @@
-import { ROW_HEIGHT_PX } from "../core/const";
-import { Rect, TableState } from "../core/types";
+import { ROW_HEIGHT_PX } from "./const";
+import { Rect, TableState } from "./types";
 import { Pane } from "./Pane";
 
 export function renderModule(table: TableState) {

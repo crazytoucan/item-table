@@ -1,4 +1,4 @@
-import { TableState } from "../core/types";
+import { TableState } from "./types";
 
 export function schedulingModule(table: TableState) {
   let raf = 0;
