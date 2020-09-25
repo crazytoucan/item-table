@@ -3,7 +3,7 @@ import { Hook } from "../utils/Hook";
 import { Cell } from "./Cell";
 
 export class TableCore {
-  constructor(public containerElement: HTMLElement, public markRender: () => void) {}
+  constructor(public containerElement: HTMLElement, public markDirty: () => void) {}
 
   public canvasElement = document.createElement("canvas");
   public canvasContainerElement = document.createElement("div");
@@ -11,7 +11,7 @@ export class TableCore {
   public cols: string[] = [];
   public containerHeight = 0;
   public containerWidth = 0;
-  public scrollContentElement = document.createElement("div");
+  public contentElement = document.createElement("div");
   public ctx: CanvasRenderingContext2D | null = null;
   public modelHeight = 0;
   public modelWidth = 0;
@@ -23,6 +23,7 @@ export class TableCore {
   public onCanvasInvalidated = new Hook();
   public onDispose = new Hook();
   public onResize = new Hook();
+  public onBeforeRender = new Hook();
   public onRender = new Hook();
   public onStart = new Hook();
 }

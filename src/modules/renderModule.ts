@@ -8,7 +8,7 @@ import {
 } from "../core/const";
 import { Rect } from "../core/Rect";
 import { IRenderer, TableCore } from "../core/types";
-import { TextCellRenderer } from "../display/TextCellRenderer";
+import { TextCellRenderer } from "../renderers/TextCellRenderer";
 import { assertNonNullishDEV } from "../utils/assertUtils";
 import { parity, rectContains, rectFromExtent, rectIntersect } from "../utils/renderingUtils";
 
@@ -103,11 +103,11 @@ export function renderModule(core: TableCore) {
   let lastPhysicalRect = EMPTY_RECT;
   const renderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
 
-  core.onCanvasInvalidated.add(0, () => {
+  core.onCanvasInvalidated.add(() => {
     lastPhysicalRect = EMPTY_RECT;
   });
 
-  core.onRender.add(0, () => {
+  core.onRender.add(() => {
     const { scrollLeft, pixelRatio, canvasElement, scrollTop } = core;
     const physicalRect = new Rect(
       scrollLeft * pixelRatio,

@@ -1,5 +1,6 @@
 import { TableCore } from "./core/types";
 import { layoutModule } from "./modules/layoutModule";
+import { mouseModule } from "./modules/mouseModule";
 import { renderModule } from "./modules/renderModule";
 import { ICellCallback } from "./types";
 import { raf } from "./utils/raf";
@@ -18,8 +19,8 @@ export class NimbleTable {
   }
 
   public start() {
-    [layoutModule, renderModule].forEach((m) => m(this.core));
-    this.core.onStart.emit({});
+    [layoutModule, mouseModule, renderModule].forEach((m) => m(this.core));
+    this.core.onStart.emit();
     this.render.schedule();
   }
 
@@ -46,10 +47,11 @@ export class NimbleTable {
   }
 
   dispose() {
-    this.core.onDispose.emit({});
+    this.core.onDispose.emit();
   }
 
   private render = raf(() => {
-    this.core.onRender.emit({});
+    this.core.onBeforeRender.emit();
+    this.core.onRender.emit();
   });
 }

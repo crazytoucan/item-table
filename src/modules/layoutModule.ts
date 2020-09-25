@@ -3,17 +3,25 @@ import { TableCore } from "../core/types";
 import { setStyle } from "../utils/htmlUtils";
 
 export function layoutModule(core: TableCore) {
+  const { canvasElement, containerElement, canvasContainerElement, contentElement } = core;
   const observer = new ResizeObserver(() => {
-    core.onResize.emit({});
+    core.onResize.emit();
+    core.markDirty();
   });
 
-  core.onStart.add(0, () => {
-    const { containerElement, canvasContainerElement, scrollContentElement } = core;
+  function onScroll() {
+    core.scrollLeft = containerElement.scrollLeft;
+    core.scrollTop = containerElement.scrollTop;
+    core.markDirty();
+  }
+
+  core.onStart.add(() => {
+    canvasContainerElement.appendChild(canvasElement);
     observer.observe(containerElement);
     containerElement.appendChild(canvasContainerElement);
-    containerElement.appendChild(scrollContentElement);
+    containerElement.appendChild(contentElement);
 
-    setStyle(scrollContentElement, {
+    setStyle(contentElement, {
       position: "absolute",
       top: "0",
       left: "0",
@@ -28,13 +36,15 @@ export function layoutModule(core: TableCore) {
       height: "100%",
       overflow: "hidden",
     });
+
+    containerElement.addEventListener("scroll", onScroll);
   });
 
-  core.onRender.add(-1, () => {
+  core.onBeforeRender.add(() => {
     core.containerWidth = core.containerElement.clientWidth;
     core.containerHeight = core.containerElement.clientHeight;
     core.pixelRatio = devicePixelRatio;
-    setStyle(core.scrollContentElement, {
+    setStyle(core.contentElement, {
       width: `${COL_WIDTH_PX * core.cols.length}px`,
       height: `${ROW_HEIGHT_PX * core.rows.length}px`,
     });
@@ -55,7 +65,7 @@ export function layoutModule(core: TableCore) {
       });
 
       core.ctx = null;
-      core.onCanvasInvalidated.emit({});
+      core.onCanvasInvalidated.emit();
     }
 
     if (core.ctx === null) {
@@ -63,10 +73,11 @@ export function layoutModule(core: TableCore) {
     }
   });
 
-  core.onDispose.add(0, () => {
-    const { canvasContainerElement, scrollContentElement } = core;
+  core.onDispose.add(() => {
+    const { canvasContainerElement, contentElement: scrollContentElement } = core;
     canvasContainerElement.remove();
     scrollContentElement.remove();
     observer.disconnect();
+    containerElement.removeEventListener("scroll", onScroll);
   });
 }

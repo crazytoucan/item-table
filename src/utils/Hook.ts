@@ -1,32 +1,43 @@
-export class Hook<T = {}> {
-  private listeners: {
-    order: number;
-    cb: (t: T) => void;
-  }[] = [];
+import { removeFirst } from "./collectionUtils";
 
-  add(order: number, cb: (t: T) => void) {
-    const idx = this.listeners.findIndex((e) => e.order > order);
-    if (idx === -1) {
-      this.listeners.push({ order, cb });
-    } else {
-      this.listeners.splice(idx, 0, { order, cb });
-    }
+interface IListener<T> {
+  (t: T): void;
+}
+
+type IEmit<T> = T extends void ? () => void : (t: T) => void;
+
+export class Hook<T = void> {
+  private listeners: IListener<T>[] = [];
+  private allowEdits = true;
+
+  add(cb: (t: T) => void) {
+    this.ensureAllowEdits();
+    this.listeners.push(cb);
   }
 
   remove(cb: (t: T) => void) {
-    const idx = this.listeners.findIndex((e) => e.cb === cb);
-    if (idx !== -1) {
-      this.listeners.splice(idx, 1);
-    }
+    this.ensureAllowEdits();
+    removeFirst(this.listeners, cb);
   }
 
-  emit(t: T) {
-    for (const { cb } of this.listeners) {
+  emit = ((t: T) => {
+    this.allowEdits = false;
+    const listeners = this.listeners;
+    for (let i = 0; i < listeners.length; i++) {
       try {
-        cb(t);
+        listeners[i](t);
       } catch (e) {
         console.error(e);
       }
+    }
+
+    this.allowEdits = true;
+  }) as IEmit<T>;
+
+  private ensureAllowEdits() {
+    if (!this.allowEdits) {
+      this.listeners = [...this.listeners];
+      this.allowEdits = true;
     }
   }
 }

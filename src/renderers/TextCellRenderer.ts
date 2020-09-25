@@ -23,15 +23,15 @@ export class TextCellRenderer implements IRenderer {
 
     ctx.save();
     ctx.scale(pixelRatio, pixelRatio);
+    ctx.textBaseline = "alphabetic";
+    ctx.font = fontString;
     for (const { row, col, value } of cells) {
       const textValue = value as ICell_Text;
       const x = COL_WIDTH_PX * col + cellPaddingLeft;
       const lineOffset = fontSize * (baseline * lineHeight);
       const foreground = parity(row, rowEvenForeground, rowOddForeground);
 
-      ctx.textBaseline = "alphabetic";
       ctx.fillStyle = foreground;
-      ctx.font = fontString;
       ctx.fillText(textValue.text, x, row * ROW_HEIGHT_PX + cellPaddingTop + lineOffset);
     }
 
