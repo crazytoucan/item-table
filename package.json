@@ -18,8 +18,9 @@
     "typescript": "^4.0.2"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/crazytoucan/item-table.git"
+    "type": "git",
+    "url": "https://github.com/crazytoucan/item-table.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "version": "0.0.1"
 }
