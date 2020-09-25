@@ -20,10 +20,14 @@ export class Pane {
 
     const clean = this.transferExistingPixelsIfPossible(source, dest);
     ctx.save();
+    ctx.beginPath();
+    ctx.rect(dest.left, dest.top, dest.width, dest.height);
+    ctx.clip();
     ctx.translate(-source.left + dest.left, -source.top + dest.top);
     for (const layer of this.core.layers) {
       layer.render(this.core, source, clean);
     }
+
     ctx.restore();
   }
 
