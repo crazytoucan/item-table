@@ -1,4 +1,4 @@
-import { NimbleTable } from "../NimbleTable";
+import { ItemTable } from "../ItemTable";
 import { setStyle } from "../utils/htmlUtils";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     position: "relative",
   });
 
-  const table = new NimbleTable({
+  const table = new ItemTable({
     element: container,
     cellCallback: (row, col) => ({
       kind: "text",

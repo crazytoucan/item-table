@@ -20,8 +20,8 @@ export interface ICell_Blank {
 }
 
 export type ICell = ICell_Image | ICell_Text | ICell_Blank;
-export interface ICellCallback {
-  (row: string, col: string): ICell;
+export interface ICellCallback<TROW, TCOL> {
+  (row: TROW, col: TCOL): ICell;
 }
 
 export interface ITheme {
@@ -40,14 +40,14 @@ export interface ITheme {
   "text.fontWeight"?: number;
 }
 
-export interface INimbleTableEventMap {
+export interface IItemTableEventMap {
   "cell.dblclick": {
     row: string;
     col: string;
   };
 }
 
-export interface IDuratableEvent<K extends keyof INimbleTableEventMap> {
+export interface IDuratableEvent<K extends keyof IItemTableEventMap> {
   type: K;
-  data: INimbleTableEventMap[K];
+  data: IItemTableEventMap[K];
 }

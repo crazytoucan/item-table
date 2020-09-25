@@ -1,27 +1,28 @@
 import { ROW_HEIGHT_PX } from "../core/const";
-import { Rect } from "../core/Rect";
-import { TableCore } from "../core/types";
+import { Rect, TableState } from "../core/types";
 import { Pane } from "./Pane";
 
-export function renderModule(core: TableCore) {
-  const pane_NE = new Pane(core);
-  const pane_SE = new Pane(core);
+export function renderModule(table: TableState) {
+  const pane_NE = new Pane();
+  const pane_SE = new Pane();
 
-  core.onInvalidate.add(() => {
+  table.onInvalidate.add(() => {
     pane_NE.invalidate();
     pane_SE.invalidate();
   });
 
-  core.onRender.add(() => {
-    const { scrollLeft, canvasElement, scrollTop, pixelRatio } = core;
+  table.onRender.add(() => {
+    const { scrollLeft, canvasElement, scrollTop, pixelRatio } = table;
     const northHeight = ROW_HEIGHT_PX * pixelRatio;
 
     pane_NE.draw(
+      table,
       new Rect(scrollLeft * pixelRatio, 0, canvasElement.width, northHeight),
       new Rect(0, 0, canvasElement.width, northHeight),
     );
 
     pane_SE.draw(
+      table,
       new Rect(
         scrollLeft * pixelRatio,
         northHeight + scrollTop * pixelRatio,

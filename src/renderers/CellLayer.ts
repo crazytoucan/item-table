@@ -1,7 +1,5 @@
-import { Cell } from "../core/Cell";
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { Rect } from "../core/Rect";
-import { ILayer, TableCore } from "../core/types";
+import { Cell, ILayer, Rect, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
 import { clamp } from "../utils/numberUtils";
 import {
@@ -13,8 +11,8 @@ import {
 } from "../utils/renderingUtils";
 
 export class CellLayer implements ILayer {
-  public render(core: TableCore, source: Rect, clean: Rect) {
-    const { ctx, cellCallback, pixelRatio, rows, cols, cellRenderers } = core;
+  public render(table: TableState, source: Rect, clean: Rect) {
+    const { ctx, pixelRatio, rows, cols, cellCallback, cellRenderers } = table;
     assertNonNullishDEV(ctx);
 
     const cellsStartTop = ROW_HEIGHT_PX * pixelRatio;
@@ -59,7 +57,7 @@ export class CellLayer implements ILayer {
         );
 
         if (!rectContains(clean, cellRect)) {
-          const selected = core.selection.has(r);
+          const selected = table.selection.has(r);
           ctx.fillStyle = selected
             ? DEFAULT_THEME.selectionColor
             : parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);

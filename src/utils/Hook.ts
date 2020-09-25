@@ -20,7 +20,9 @@ export class Hook<T = void> {
     removeFirst(this.listeners, cb);
   }
 
-  emit = ((t: T) => {
+  public emit = this._emit as IEmit<T>;
+
+  private _emit(t: T) {
     this.allowEdits = false;
     const listeners = this.listeners;
     for (let i = 0; i < listeners.length; i++) {
@@ -32,7 +34,7 @@ export class Hook<T = void> {
     }
 
     this.allowEdits = true;
-  }) as IEmit<T>;
+  }
 
   private ensureAllowEdits() {
     if (!this.allowEdits) {

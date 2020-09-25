@@ -1,13 +1,12 @@
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { Rect } from "../core/Rect";
-import { ILayer, TableCore } from "../core/types";
+import { ILayer, Rect, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
 import { clamp } from "../utils/numberUtils";
 import { rectContains } from "../utils/renderingUtils";
 
 export class ColHeaderLayer implements ILayer {
-  public render(core: TableCore, source: Rect, clean: Rect) {
-    const { ctx, cols, pixelRatio } = core;
+  public render(table: TableState, source: Rect, clean: Rect) {
+    const { ctx, cols, pixelRatio } = table;
     assertNonNullishDEV(ctx);
 
     if (source.top > ROW_HEIGHT_PX * pixelRatio) {

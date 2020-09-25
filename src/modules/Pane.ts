@@ -1,38 +1,36 @@
 import { EMPTY_RECT } from "../core/const";
-import { Rect } from "../core/Rect";
-import { TableCore } from "../core/types";
+import { Rect, TableState } from "../core/types";
 import { assertEqualsDEV, assertNonNullishDEV } from "../utils/assertUtils";
 import { rectIntersect } from "../utils/renderingUtils";
 
 export class Pane {
   private lastDest = EMPTY_RECT;
   private lastSource = EMPTY_RECT;
-  constructor(private core: TableCore) {}
 
   invalidate() {
     this.lastSource = EMPTY_RECT;
     this.lastDest = EMPTY_RECT;
   }
 
-  draw(source: Rect, dest: Rect) {
-    const { ctx } = this.core;
+  draw(table: TableState, source: Rect, dest: Rect) {
+    const { ctx } = table;
     assertNonNullishDEV(ctx);
 
-    const clean = this.transferExistingPixelsIfPossible(source, dest);
+    const clean = this.transferExistingPixelsIfPossible(table, source, dest);
     ctx.save();
     ctx.beginPath();
     ctx.rect(dest.left, dest.top, dest.width, dest.height);
     ctx.clip();
     ctx.translate(-source.left + dest.left, -source.top + dest.top);
-    for (const layer of this.core.layers) {
-      layer.render(this.core, source, clean);
+    for (const layer of table.layers) {
+      layer.render(table, source, clean);
     }
 
     ctx.restore();
   }
 
-  private transferExistingPixelsIfPossible(source: Rect, dest: Rect) {
-    const { canvasElement, ctx } = this.core;
+  private transferExistingPixelsIfPossible(table: TableState, source: Rect, dest: Rect) {
+    const { canvasElement, ctx } = table;
     assertEqualsDEV(source.width, dest.width);
     assertEqualsDEV(source.height, dest.height);
 

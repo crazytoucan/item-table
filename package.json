@@ -1,5 +1,5 @@
 {
-  "name": "nimble-table",
+  "name": "item-table",
   "scripts": {
     "build": "run-p build:css build:js",
     "build:js": "./scripts/build_js.sh",

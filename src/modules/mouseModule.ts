@@ -1,13 +1,13 @@
 import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "../core/const";
-import { TableCore } from "../core/types";
+import { TableState } from "../core/types";
 
-export function mouseModule(core: TableCore) {
-  const { contentElement } = core;
+export function mouseModule(table: TableState) {
+  const { contentElement } = table;
   const getCell = (evt: MouseEvent) => {
     const row = Math.floor((evt.offsetY - ROW_HEIGHT_PX) / ROW_HEIGHT_PX);
     const col = Math.floor(evt.offsetX / COL_WIDTH_PX);
 
-    return row >= 0 && row < core.rows.length && col >= 0 && col < core.cols.length
+    return row >= 0 && row < table.rows.length && col >= 0 && col < table.cols.length
       ? { row, col }
       : null;
   };
@@ -23,9 +23,9 @@ export function mouseModule(core: TableCore) {
     if (evt.button === 0) {
       const cell = getCell(evt);
       if (cell !== null) {
-        core.selection = new Set([cell.row]);
-        core.onInvalidate.emit();
-        core.markDirty();
+        table.selection = new Set([cell.row]);
+        table.onInvalidate.emit();
+        table.markDirty();
       }
     }
   });

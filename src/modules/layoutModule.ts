@@ -1,21 +1,20 @@
 import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "../core/const";
-import { TableCore } from "../core/types";
+import { TableState } from "../core/types";
 import { setStyle } from "../utils/htmlUtils";
 
-export function layoutModule(core: TableCore) {
-  const { canvasElement, containerElement, canvasContainerElement, contentElement } = core;
+export function layoutModule(t: TableState) {
   const observer = new ResizeObserver(() => {
-    core.onResize.emit();
-    core.markDirty();
+    t.onResize.emit();
+    t.markDirty();
   });
 
-  setStyle(contentElement, {
+  setStyle(t.contentElement, {
     position: "absolute",
     top: "0",
     left: "0",
   });
 
-  setStyle(canvasContainerElement, {
+  setStyle(t.canvasContainerElement, {
     position: "sticky",
     left: "0",
     top: "0",
@@ -24,62 +23,62 @@ export function layoutModule(core: TableCore) {
     overflow: "hidden",
   });
 
-  setStyle(canvasElement, {
+  setStyle(t.canvasElement, {
     pointerEvents: "none",
   });
 
-  canvasContainerElement.appendChild(canvasElement);
+  t.canvasContainerElement.appendChild(t.canvasElement);
 
   function onScroll() {
-    core.scrollLeft = containerElement.scrollLeft;
-    core.scrollTop = containerElement.scrollTop;
-    core.markDirty();
+    t.scrollLeft = t.containerElement.scrollLeft;
+    t.scrollTop = t.containerElement.scrollTop;
+    t.markDirty();
   }
 
-  core.onStart.add(() => {
-    containerElement.addEventListener("scroll", onScroll);
-    observer.observe(containerElement);
-    containerElement.appendChild(canvasContainerElement);
-    containerElement.appendChild(contentElement);
+  t.onStart.add(() => {
+    t.containerElement.addEventListener("scroll", onScroll);
+    observer.observe(t.containerElement);
+    t.containerElement.appendChild(t.canvasContainerElement);
+    t.containerElement.appendChild(t.contentElement);
   });
 
-  core.onBeforeRender.add(() => {
-    core.containerWidth = core.containerElement.clientWidth;
-    core.containerHeight = core.containerElement.clientHeight;
-    core.pixelRatio = devicePixelRatio;
-    setStyle(core.contentElement, {
-      width: `${COL_WIDTH_PX * core.cols.length}px`,
-      height: `${ROW_HEIGHT_PX * core.rows.length}px`,
+  t.onBeforeRender.add(() => {
+    t.containerWidth = t.containerElement.clientWidth;
+    t.containerHeight = t.containerElement.clientHeight;
+    t.pixelRatio = devicePixelRatio;
+    setStyle(t.contentElement, {
+      width: `${COL_WIDTH_PX * t.cols.length}px`,
+      height: `${ROW_HEIGHT_PX * t.rows.length}px`,
     });
 
-    const physicalWidth = core.containerWidth * core.pixelRatio;
-    const physicalHeight = core.containerHeight * core.pixelRatio;
+    const physicalWidth = t.containerWidth * t.pixelRatio;
+    const physicalHeight = t.containerHeight * t.pixelRatio;
     if (
-      core.canvasElement.width !== physicalWidth ||
-      core.canvasElement.height !== physicalHeight ||
-      core.canvasElement.clientWidth !== core.containerWidth ||
-      core.canvasElement.clientHeight !== core.containerHeight
+      t.canvasElement.width !== physicalWidth ||
+      t.canvasElement.height !== physicalHeight ||
+      t.canvasElement.clientWidth !== t.containerWidth ||
+      t.canvasElement.clientHeight !== t.containerHeight
     ) {
-      core.canvasElement.width = physicalWidth;
-      core.canvasElement.height = physicalHeight;
-      setStyle(core.canvasElement, {
-        width: `${core.containerWidth}px`,
-        height: `${core.containerHeight}px`,
+      t.canvasElement.width = physicalWidth;
+      t.canvasElement.height = physicalHeight;
+      setStyle(t.canvasElement, {
+        width: `${t.containerWidth}px`,
+        height: `${t.containerHeight}px`,
       });
 
-      core.ctx = null;
-      core.onInvalidate.emit();
+      t.ctx = null;
+      t.onInvalidate.emit();
     }
 
-    if (core.ctx === null) {
-      core.ctx = core.canvasElement.getContext("2d", { alpha: false });
+    if (t.ctx === null) {
+      t.ctx = t.canvasElement.getContext("2d", { alpha: false });
     }
   });
 
-  core.onDispose.add(() => {
-    canvasContainerElement.remove();
-    contentElement.remove();
+  t.onDispose.add(() => {
+    t.canvasContainerElement.remove();
+    t.contentElement.remove();
     observer.disconnect();
-    containerElement.removeEventListener("scroll", onScroll);
+    t.containerElement.removeEventListener("scroll", onScroll);
   });
 }

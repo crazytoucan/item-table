@@ -1,5 +1,5 @@
 import FontMetrics from "fontmetrics";
-import { Rect } from "./Rect";
+import { Rect } from "./types";
 
 export const COL_WIDTH_PX = 120;
 export const ROW_HEIGHT_PX = 19;
