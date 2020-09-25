@@ -25,7 +25,6 @@ export function mouseModule(table: TableState) {
       if (cell !== null) {
         table.selection = new Set([cell.row]);
         table.onInvalidate.emit();
-        table.markDirty();
       }
     }
   });

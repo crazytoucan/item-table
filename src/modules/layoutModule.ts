@@ -5,7 +5,6 @@ import { setStyle } from "../utils/htmlUtils";
 export function layoutModule(t: TableState) {
   const observer = new ResizeObserver(() => {
     t.onResize.emit();
-    t.markDirty();
   });
 
   setStyle(t.contentElement, {
@@ -32,7 +31,7 @@ export function layoutModule(t: TableState) {
   function onScroll() {
     t.scrollLeft = t.containerElement.scrollLeft;
     t.scrollTop = t.containerElement.scrollTop;
-    t.markDirty();
+    t.onDirty.emit();
   }
 
   t.onStart.add(() => {

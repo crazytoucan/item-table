@@ -1,5 +1,4 @@
 import FontMetrics from "fontmetrics";
-import { Rect } from "./types";
 
 export const COL_WIDTH_PX = 120;
 export const ROW_HEIGHT_PX = 19;
@@ -29,5 +28,3 @@ export const DEFAULT_FONT_METRICS = FontMetrics({
   fontWeight: DEFAULT_THEME.fontWeight,
   origin: "top",
 });
-
-export const EMPTY_RECT = new Rect(0, 0, 0, 0);

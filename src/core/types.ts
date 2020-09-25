@@ -6,7 +6,7 @@ import { Hook } from "../utils/Hook";
 import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
 
 export class TableState {
-  constructor(public containerElement: HTMLElement, public markDirty: () => void) {}
+  constructor(public containerElement: HTMLElement) {}
 
   public canvasContainerElement = document.createElement("div");
   public canvasElement = document.createElement("canvas");
@@ -26,6 +26,7 @@ export class TableState {
   public scrollTop = 0;
   public selection = new Set<number>([3]);
 
+  public onDirty = new Hook();
   public onInvalidate = new Hook();
   public onDispose = new Hook();
   public onResize = new Hook();

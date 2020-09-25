@@ -1,4 +1,4 @@
-import { Rect } from "../core/Rect";
+import { Rect } from "../core/types";
 
 export function parity<T>(i: number, evenValue: T, oddValue: T) {
   return i % 2 === 0 ? evenValue : oddValue;
@@ -16,7 +16,6 @@ export function rectIntersect(a: Rect, b: Rect): Rect {
   return rectFromExtent(left, top, right, bottom);
 }
 
-
 export function rectTranslate(rect: Rect, tx: number, ty: number): Rect {
   return new Rect(rect.left + tx, rect.top + ty, rect.width, rect.height);
 }
@@ -28,4 +27,8 @@ export function rectIntersects(a: Rect, b: Rect) {
 
 export function rectContains(a: Rect, b: Rect) {
   return a.left <= b.left && a.top <= b.top && a.right >= b.right && a.bottom >= b.bottom;
+}
+
+export function rectEmpty() {
+  return new Rect(0, 0, 0, 0);
 }

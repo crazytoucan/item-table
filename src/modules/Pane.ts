@@ -1,15 +1,14 @@
-import { EMPTY_RECT } from "../core/const";
 import { Rect, TableState } from "../core/types";
 import { assertEqualsDEV, assertNonNullishDEV } from "../utils/assertUtils";
-import { rectIntersect } from "../utils/renderingUtils";
+import { rectEmpty, rectIntersect } from "../utils/renderingUtils";
 
 export class Pane {
-  private lastDest = EMPTY_RECT;
-  private lastSource = EMPTY_RECT;
+  private lastDest = rectEmpty();
+  private lastSource = rectEmpty();
 
   invalidate() {
-    this.lastSource = EMPTY_RECT;
-    this.lastDest = EMPTY_RECT;
+    this.lastSource = rectEmpty();
+    this.lastDest = rectEmpty();
   }
 
   draw(table: TableState, source: Rect, dest: Rect) {
