@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
+  "rules": {
+    "ban-types": false,
+    "callable-types": false,
+    "ordered-imports": true,
+    "no-implicit-dependencies": [
+      true,
+      "dev"
+    ]
+  }
+}
