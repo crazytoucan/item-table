@@ -35,8 +35,11 @@ export class ColHeaderLayer implements ILayer {
 
       ctx.fillStyle = DEFAULT_THEME.colheaderBackground;
       ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+      ctx.fillStyle = DEFAULT_THEME.gridline;
+      ctx.fillRect(rect.left + rect.width - 2, 6, 2, 36);
+      ctx.fillRect(rect.left, rect.top + rect.height - 1, rect.width, 1);
       ctx.fillStyle = DEFAULT_THEME.colheaderForeground;
-      ctx.fillText(String(col), rect.left + 4, 0);
+      ctx.fillText(String(col), rect.left + 24, 10);
     }
   }
 }
