@@ -1,5 +1,5 @@
 import { setStyle } from "../utils/htmlUtils";
-import { ROW_HEIGHT_PX } from "./const";
+import { DEFAULT_THEME, ROW_HEIGHT_PX } from "./const";
 import { renderspace_t, TableState } from "./types";
 
 function computeRenderspaceLayout(table: TableState) {
@@ -16,6 +16,7 @@ function computeRenderspaceLayout(table: TableState) {
   }
 
   colsLeft[userCols.length] = Math.floor(x);
+  table.frozenHeight = Math.floor(table.pixelRatio * DEFAULT_THEME.colheaderHeight);
 }
 
 export function layoutModule(table: TableState) {
@@ -65,7 +66,7 @@ export function layoutModule(table: TableState) {
 
     setStyle(table.contentElement, {
       width: `${table.colsLeft[table.userCols.length] / devicePixelRatio}px`,
-      height: `${ROW_HEIGHT_PX * table.userRows.length}px`,
+      height: `${DEFAULT_THEME.colheaderHeight + ROW_HEIGHT_PX * table.userRows.length}px`,
     });
 
     const physicalWidth = table.containerWidth * table.pixelRatio;

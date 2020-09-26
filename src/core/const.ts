@@ -11,6 +11,7 @@ export const DEFAULT_THEME = {
   rowEvenBackground: "#292a2c",
   rowEvenForeground: "#dedede",
   selectionColor: "#0457d0",
+  colheaderHeight: 23,
   gridline: "#444",
   rowOddBackground: "#1e1f22",
   rowOddForeground: "#dedede",

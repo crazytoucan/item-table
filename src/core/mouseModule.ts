@@ -1,20 +1,9 @@
-import { upperBound } from '../utils/collectionUtils';
 import { order } from "../utils/numberUtils";
-import { ROW_HEIGHT_PX } from "./const";
 import { query } from "./query";
 import { row_t, TableState } from "./types";
 
 export function mouseModule(table: TableState) {
   const { contentElement } = table;
-  const getCell = (evt: MouseEvent) => {
-    const row = Math.floor((evt.offsetY - ROW_HEIGHT_PX) / ROW_HEIGHT_PX);
-    const col = upperBound(table.colsLeft, evt.offsetX * table.pixelRatio);
-
-    return row >= 0 && row < table.userRows.length && col >= 0 && col < table.userCols.length
-      ? { row, col }
-      : null;
-  };
-
   contentElement.addEventListener("mousemove", (evt) => {
     let iter = query(table, evt.clientX, evt.clientY);
     while (iter !== null) {
@@ -35,19 +24,27 @@ export function mouseModule(table: TableState) {
     | undefined;
 
   function onMouseMoveWhileDown(evt: MouseEvent) {
-    const cell = getCell(evt);
-    if (drag === undefined || cell === null) {
+    if (drag === undefined) {
       return;
     }
 
-    const [from, to] = order(drag.startRow, cell.row);
-    const selection = new Set<row_t>();
-    for (let i = from; i <= to; i++) {
-      selection.add(i);
-    }
+    let iter = query(table, evt.clientX, evt.clientY);
+    while (iter !== null) {
+      switch (iter.data.type) {
+        case "cell":
+          const [from, to] = order(drag.startRow, iter.data.row);
+          const selection = new Set<row_t>();
+          for (let i = from; i <= to; i++) {
+            selection.add(i);
+          }
 
-    table.selection = selection;
-    table.onInvalidate.emit();
+          table.selection = selection;
+          table.onInvalidate.emit();
+          break;
+      }
+
+      iter = iter.parent;
+    }
   }
 
   contentElement.addEventListener("mousedown", (evt) => {
@@ -64,8 +61,8 @@ export function mouseModule(table: TableState) {
             document.addEventListener("mouseup", () => {
               document.removeEventListener("mousemove", onMouseMoveWhileDown);
             });
-            return;
           }
+          break;
       }
 
       iter = iter.parent;

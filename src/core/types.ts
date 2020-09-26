@@ -15,10 +15,13 @@ export class TableState {
   public canvasContainerElement = document.createElement("div");
   public canvasElement = document.createElement("canvas");
   public cellRenderers = [new TextCellRenderer()];
+  public colsLeft = new Int32Array(); // renderspace_t
   public containerHeight: cssspace_t = 0;
   public containerWidth: cssspace_t = 0;
   public contentElement = document.createElement("div");
   public ctx: CanvasRenderingContext2D | null = null;
+  public frozenHeight: renderspace_t = 0;
+  public frozenWidth: renderspace_t = 0;
   public layers: Layer[] = [new CellLayer(), new ColHeaderLayer()];
   public pixelRatio = 0;
   public scrollLeft: cssspace_t = 0;
@@ -26,11 +29,10 @@ export class TableState {
   public selection = new Set<number>([3]);
   public userCellCallback: ICellCallback<unknown, unknown> = () => ({ kind: "blank" });
   public userCols: string[] = [];
+  public userColWidths = new Map<string, cssspace_t>([["3", 180]]);
   public userRows: string[] = [];
   public virtualHeight: renderspace_t = 0;
   public virtualWidth: renderspace_t = 0;
-  public colsLeft = new Int32Array(); // renderspace_t
-  public userColWidths = new Map<string, cssspace_t>([["3", 180]]);
 
   public onDirty = new Hook();
   public onInvalidate = new Hook();

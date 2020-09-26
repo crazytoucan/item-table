@@ -25,7 +25,7 @@ export class CellLayer implements Layer {
     } = table;
     assertNonNullishDEV(ctx);
 
-    const cellsStartTop: renderspace_t = ROW_HEIGHT_PX * pixelRatio;
+    const cellsStartTop: renderspace_t = DEFAULT_THEME.colheaderHeight * pixelRatio;
     const cellsRegion = rectTranslate(
       rectIntersect(source, new Rect(0, cellsStartTop, Infinity, Infinity)),
       0,
@@ -98,7 +98,7 @@ export class CellLayer implements Layer {
 
   public query(table: TableState, x: renderspace_t, y: renderspace_t) {
     const { colsLeft, userCols, userRows, pixelRatio } = table;
-    const cellsStartTop: renderspace_t = ROW_HEIGHT_PX * pixelRatio;
+    const cellsStartTop: renderspace_t = DEFAULT_THEME.colheaderHeight * pixelRatio;
     const col: col_t = upperBound(colsLeft, x) - 1;
     const row: row_t = Math.floor((y - cellsStartTop) / ROW_HEIGHT_PX / pixelRatio);
     return row < 0 || row >= userRows.length || col < 0 || col >= userCols.length
