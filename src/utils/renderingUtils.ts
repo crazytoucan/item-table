@@ -30,5 +30,5 @@ export function rectContains(a: Rect, b: Rect) {
 }
 
 export function rectEmpty() {
-  return new Rect(0, 0, 0, 0);
+  return new Rect<number>(0, 0, 0, 0);
 }

@@ -1,17 +1,17 @@
-import { Rect, TableState } from "./types";
 import { assertEqualsDEV, assertNonNullishDEV } from "../utils/assertUtils";
 import { rectEmpty, rectIntersect } from "../utils/renderingUtils";
+import { Rect, rendercoord_t, TableState } from "./types";
 
 export class Pane {
-  private lastDest = rectEmpty();
-  private lastSource = rectEmpty();
+  private lastDest: Rect<rendercoord_t> = rectEmpty();
+  private lastSource: Rect<rendercoord_t> = rectEmpty();
 
   invalidate() {
     this.lastSource = rectEmpty();
     this.lastDest = rectEmpty();
   }
 
-  draw(table: TableState, source: Rect, dest: Rect) {
+  draw(table: TableState, source: Rect<rendercoord_t>, dest: Rect<rendercoord_t>) {
     const { ctx } = table;
     assertNonNullishDEV(ctx);
 
@@ -28,12 +28,16 @@ export class Pane {
     ctx.restore();
   }
 
-  private transferExistingPixelsIfPossible(table: TableState, source: Rect, dest: Rect) {
+  private transferExistingPixelsIfPossible(
+    table: TableState,
+    source: Rect<rendercoord_t>,
+    dest: Rect<rendercoord_t>,
+  ) {
     const { canvasElement, ctx } = table;
     assertEqualsDEV(source.width, dest.width);
     assertEqualsDEV(source.height, dest.height);
 
-    const cleanRect = rectIntersect(this.lastSource, source);
+    const cleanRect: Rect<rendercoord_t> = rectIntersect(this.lastSource, source);
     assertNonNullishDEV(ctx);
 
     if (cleanRect.width > 0 && cleanRect.height > 0) {

@@ -46,8 +46,8 @@ export function layoutModule(t: TableState) {
     t.containerHeight = t.containerElement.clientHeight;
     t.pixelRatio = devicePixelRatio;
     setStyle(t.contentElement, {
-      width: `${COL_WIDTH_PX * t.cols.length}px`,
-      height: `${ROW_HEIGHT_PX * t.rows.length}px`,
+      width: `${COL_WIDTH_PX * t.userCols.length}px`,
+      height: `${ROW_HEIGHT_PX * t.userRows.length}px`,
     });
 
     const physicalWidth = t.containerWidth * t.pixelRatio;

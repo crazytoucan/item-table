@@ -14,7 +14,7 @@ export class ItemTable<TROW, TCOL> {
   private table: TableState;
   constructor({ cellCallback, element }: IItemTableOptions<TROW, TCOL>) {
     this.table = new TableState(element);
-    this.table.cellCallback = cellCallback as ICellCallback<unknown, unknown>;
+    this.table.userCellCallback = cellCallback as ICellCallback<unknown, unknown>;
   }
 
   public start() {
@@ -26,12 +26,12 @@ export class ItemTable<TROW, TCOL> {
   }
 
   set cols(cols: string[]) {
-    this.table.cols = cols;
+    this.table.userCols = cols;
     this.table.onDirty.emit();
   }
 
   set rows(rows: string[]) {
-    this.table.rows = rows;
+    this.table.userRows = rows;
     this.table.onDirty.emit();
   }
 

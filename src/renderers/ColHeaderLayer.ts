@@ -1,23 +1,28 @@
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { ILayer, Rect, TableState } from "../core/types";
+import { col_t, Layer, Rect, rendercoord_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
 import { clamp } from "../utils/numberUtils";
 import { rectContains } from "../utils/renderingUtils";
 
-export class ColHeaderLayer implements ILayer {
-  public render(table: TableState, source: Rect, clean: Rect) {
-    const { ctx, cols, pixelRatio } = table;
+export class ColHeaderLayer implements Layer {
+  public render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>) {
+    const { ctx, userCols, pixelRatio } = table;
     assertNonNullishDEV(ctx);
 
     if (source.top > ROW_HEIGHT_PX * pixelRatio) {
       return;
     }
 
-    const minCol = clamp(Math.floor(source.left / pixelRatio / COL_WIDTH_PX), 0, cols.length - 1);
-    const maxCol = clamp(
+    const minCol: col_t = clamp(
+      Math.floor(source.left / pixelRatio / COL_WIDTH_PX),
+      0,
+      userCols.length - 1,
+    );
+
+    const maxCol: col_t = clamp(
       Math.ceil((source.right - 1) / pixelRatio / COL_WIDTH_PX),
       0,
-      cols.length - 1,
+      userCols.length - 1,
     );
 
     ctx.textBaseline = "top";
@@ -25,9 +30,15 @@ export class ColHeaderLayer implements ILayer {
       DEFAULT_THEME.fontFamily
     }'`;
 
-    for (let col = minCol; col <= maxCol; col++) {
+    for (let col: col_t = minCol; col <= maxCol; col++) {
       const left = col * COL_WIDTH_PX * pixelRatio;
-      const rect = new Rect(left, 0, COL_WIDTH_PX * pixelRatio, ROW_HEIGHT_PX * pixelRatio);
+      const rect = new Rect<rendercoord_t>(
+        left,
+        0,
+        COL_WIDTH_PX * pixelRatio,
+        ROW_HEIGHT_PX * pixelRatio,
+      );
+
       if (rectContains(clean, rect)) {
         continue;
       }

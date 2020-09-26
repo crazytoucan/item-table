@@ -1,5 +1,5 @@
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { Cell, ILayer, Rect, TableState } from "../core/types";
+import { Cell, col_t, Layer, Rect, rendercoord_t, row_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
 import { clamp } from "../utils/numberUtils";
 import {
@@ -10,45 +10,46 @@ import {
   rectTranslate,
 } from "../utils/renderingUtils";
 
-export class CellLayer implements ILayer {
-  public render(table: TableState, source: Rect, clean: Rect) {
-    const { ctx, pixelRatio, rows, cols, cellCallback, cellRenderers } = table;
+export class CellLayer implements Layer {
+  public render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>) {
+    const { ctx, pixelRatio, userRows, userCols, userCellCallback, cellRenderers } = table;
     assertNonNullishDEV(ctx);
 
-    const cellsStartTop = ROW_HEIGHT_PX * pixelRatio;
-    const cellsSource = rectIntersect(
-      rectTranslate(source, 0, -cellsStartTop),
-      new Rect(0, 0, Infinity, Infinity),
+    const cellsStartTop: rendercoord_t = ROW_HEIGHT_PX * pixelRatio;
+    const cellsRegion = rectTranslate(
+      rectIntersect(source, new Rect(0, cellsStartTop, Infinity, Infinity)),
+      0,
+      -cellsStartTop,
     );
 
-    const minRow = clamp(
-      Math.floor(cellsSource.top / pixelRatio / ROW_HEIGHT_PX),
+    const minRow: row_t = clamp(
+      Math.floor(cellsRegion.top / pixelRatio / ROW_HEIGHT_PX),
       0,
-      rows.length - 1,
+      userRows.length - 1,
     );
 
-    const maxRow = clamp(
-      Math.ceil((cellsSource.bottom - 1) / pixelRatio / ROW_HEIGHT_PX),
+    const maxRow: row_t = clamp(
+      Math.ceil((cellsRegion.bottom - 1) / pixelRatio / ROW_HEIGHT_PX),
       0,
-      rows.length - 1,
+      userRows.length - 1,
     );
 
-    const minCol = clamp(
-      Math.floor(cellsSource.left / pixelRatio / COL_WIDTH_PX),
+    const minCol: col_t = clamp(
+      Math.floor(cellsRegion.left / pixelRatio / COL_WIDTH_PX),
       0,
-      cols.length - 1,
+      userCols.length - 1,
     );
 
-    const maxCol = clamp(
-      Math.ceil((cellsSource.right - 1) / pixelRatio / COL_WIDTH_PX),
+    const maxCol: col_t = clamp(
+      Math.ceil((cellsRegion.right - 1) / pixelRatio / COL_WIDTH_PX),
       0,
-      cols.length - 1,
+      userCols.length - 1,
     );
 
     const cells = [];
     ctx.save();
-    for (let r = minRow; r <= maxRow; r++) {
-      for (let c = minCol; c <= maxCol; c++) {
+    for (let r: row_t = minRow; r <= maxRow; r++) {
+      for (let c: col_t = minCol; c <= maxCol; c++) {
         const cellRect = rectFromExtent(
           Math.floor(pixelRatio * c * COL_WIDTH_PX),
           cellsStartTop + Math.floor(pixelRatio * r * ROW_HEIGHT_PX),
@@ -58,15 +59,17 @@ export class CellLayer implements ILayer {
 
         if (!rectContains(clean, cellRect)) {
           const selected = table.selection.has(r);
-          const rowStripeColor = parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
-          ctx.fillStyle = selected
-            ? DEFAULT_THEME.selectionColor
-            : rowStripeColor;
+          const rowStripeColor = parity(
+            r,
+            DEFAULT_THEME.rowEvenBackground,
+            DEFAULT_THEME.rowOddBackground,
+          );
 
+          ctx.fillStyle = selected ? DEFAULT_THEME.selectionColor : rowStripeColor;
           ctx.fillRect(cellRect.left, cellRect.top, cellRect.width, cellRect.height);
           ctx.fillStyle = rowStripeColor;
           ctx.fillRect(cellRect.left, cellRect.bottom - 2, cellRect.width, 2);
-          cells.push(new Cell(r, c, cellCallback(rows[r], cols[c])));
+          cells.push(new Cell(r, c, userCellCallback(userRows[r], userCols[c])));
         }
       }
     }

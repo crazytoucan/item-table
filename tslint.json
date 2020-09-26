@@ -12,6 +12,7 @@
       true,
       "dev"
     ],
-    "ordered-imports": true
+    "ordered-imports": true,
+    "variable-name": false
   }
 }

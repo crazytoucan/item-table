@@ -1,6 +1,6 @@
 import { ROW_HEIGHT_PX } from "./const";
-import { Rect, TableState } from "./types";
 import { Pane } from "./Pane";
+import { Rect, rendercoord_t, TableState } from "./types";
 
 export function renderModule(table: TableState) {
   const pane_NE = new Pane();
@@ -13,23 +13,28 @@ export function renderModule(table: TableState) {
 
   table.onRender.add(() => {
     const { scrollLeft, canvasElement, scrollTop, pixelRatio } = table;
-    const northHeight = ROW_HEIGHT_PX * pixelRatio;
+    const northHeight: rendercoord_t = ROW_HEIGHT_PX * pixelRatio;
 
     pane_NE.draw(
       table,
-      new Rect(scrollLeft * pixelRatio, 0, canvasElement.width, northHeight),
-      new Rect(0, 0, canvasElement.width, northHeight),
+      new Rect<rendercoord_t>(scrollLeft * pixelRatio, 0, canvasElement.width, northHeight),
+      new Rect<rendercoord_t>(0, 0, canvasElement.width, northHeight),
     );
 
     pane_SE.draw(
       table,
-      new Rect(
+      new Rect<rendercoord_t>(
         scrollLeft * pixelRatio,
         northHeight + scrollTop * pixelRatio,
         canvasElement.width,
         canvasElement.height - northHeight,
       ),
-      new Rect(0, northHeight, canvasElement.width, canvasElement.height - northHeight),
+      new Rect<rendercoord_t>(
+        0,
+        northHeight,
+        canvasElement.width,
+        canvasElement.height - northHeight,
+      ),
     );
   });
 }

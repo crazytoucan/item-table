@@ -1,6 +1,6 @@
 import { order } from "../utils/numberUtils";
 import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "./const";
-import { TableState } from "./types";
+import { row_t, TableState } from "./types";
 
 export function mouseModule(table: TableState) {
   const { contentElement } = table;
@@ -8,7 +8,7 @@ export function mouseModule(table: TableState) {
     const row = Math.floor((evt.offsetY - ROW_HEIGHT_PX) / ROW_HEIGHT_PX);
     const col = Math.floor(evt.offsetX / COL_WIDTH_PX);
 
-    return row >= 0 && row < table.rows.length && col >= 0 && col < table.cols.length
+    return row >= 0 && row < table.userRows.length && col >= 0 && col < table.userCols.length
       ? { row, col }
       : null;
   };
@@ -22,7 +22,7 @@ export function mouseModule(table: TableState) {
 
   let drag:
     | {
-        startRow: number;
+        startRow: row_t;
       }
     | undefined;
 
@@ -33,7 +33,7 @@ export function mouseModule(table: TableState) {
     }
 
     const [from, to] = order(drag.startRow, cell.row);
-    const selection = new Set<number>();
+    const selection = new Set<row_t>();
     for (let i = from; i <= to; i++) {
       selection.add(i);
     }

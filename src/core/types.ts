@@ -5,26 +5,31 @@ import { ICellCallback } from "../types";
 import { Hook } from "../utils/Hook";
 import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
 
+export type csscoord_t = number;
+export type rendercoord_t = number;
+export type row_t = number;
+export type col_t = number;
+
 export class TableState {
   constructor(public containerElement: HTMLElement) {}
 
   public canvasContainerElement = document.createElement("div");
   public canvasElement = document.createElement("canvas");
-  public cellCallback: ICellCallback<unknown, unknown> = () => ({ kind: "blank" });
   public cellRenderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
-  public cols: string[] = [];
-  public containerHeight = 0;
-  public containerWidth = 0;
+  public containerHeight: csscoord_t = 0;
+  public containerWidth: csscoord_t = 0;
   public contentElement = document.createElement("div");
   public ctx: CanvasRenderingContext2D | null = null;
-  public layers: ILayer[] = [new CellLayer(), new ColHeaderLayer()];
-  public modelHeight = 0;
-  public modelWidth = 0;
+  public layers: Layer[] = [new CellLayer(), new ColHeaderLayer()];
   public pixelRatio = 0;
-  public rows: string[] = [];
-  public scrollLeft = 0;
-  public scrollTop = 0;
+  public scrollLeft: csscoord_t = 0;
+  public scrollTop: csscoord_t = 0;
   public selection = new Set<number>([3]);
+  public userCellCallback: ICellCallback<unknown, unknown> = () => ({ kind: "blank" });
+  public userCols: string[] = [];
+  public userRows: string[] = [];
+  public virtualHeight: rendercoord_t = 0;
+  public virtualWidth: rendercoord_t = 0;
 
   public onDirty = new Hook();
   public onInvalidate = new Hook();
@@ -40,32 +45,62 @@ export interface IRenderContext {
   pixelRatio: number;
 }
 
-export interface ILayer {
-  render(table: TableState, source: Rect, clean: Rect): void;
+export class TableElement {
+  constructor(
+    public data: IElementData,
+    public parent: TableElement | null,
+    public localRect: Rect<rendercoord_t>,
+  ) {}
 }
 
-export interface ICellRenderer {
+export type IElementData =
+  | {
+      type: "colheader_resize_handle";
+      col: col_t;
+    }
+  | {
+      type: "colheader";
+      col: col_t;
+    }
+  | {
+      type: "cell";
+      row: row_t;
+      col: col_t;
+    }
+  | {
+      type: "row";
+      row: row_t;
+    }
+  | {
+      type: "top";
+    };
+
+export interface Layer {
+  render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>): void;
+}
+
+export interface CellRenderer {
   cellKind: string;
   render(cells: Cell[], context: IRenderContext): void;
 }
 
 export class Cell {
-  constructor(public row: number, public col: number, public value: any) {}
+  constructor(public row: row_t, public col: col_t, public value: any) {}
 }
 
-export class Rect {
+export class Rect<T extends number = number> {
   constructor(
-    public readonly left: number,
-    public readonly top: number,
-    public readonly width: number,
-    public readonly height: number,
+    public readonly left: T,
+    public readonly top: T,
+    public readonly width: T,
+    public readonly height: T,
   ) {}
 
   public get right() {
-    return this.left + this.width;
+    return (this.left + this.width) as T;
   }
 
   public get bottom() {
-    return this.top + this.height;
+    return (this.top + this.height) as T;
   }
 }
