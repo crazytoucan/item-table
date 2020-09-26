@@ -1,4 +1,6 @@
-node_modules/
+.cache/
+dist/
 esm/
+node_modules/
 .DS_Store
 *.log
