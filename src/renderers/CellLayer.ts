@@ -1,6 +1,7 @@
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
 import { Cell, col_t, Layer, Rect, rendercoord_t, row_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
+import { elementFromParentList } from "../utils/elementUtils";
 import { clamp } from "../utils/numberUtils";
 import {
   parity,
@@ -91,5 +92,15 @@ export class CellLayer implements Layer {
     }
 
     ctx.restore();
+  }
+
+  public query(table: TableState, x: rendercoord_t, y: rendercoord_t) {
+    const { userCols, userRows, pixelRatio } = table;
+    const cellsStartTop: rendercoord_t = ROW_HEIGHT_PX * pixelRatio;
+    const col: col_t = Math.floor(x / COL_WIDTH_PX / pixelRatio);
+    const row: row_t = Math.floor((y - cellsStartTop) / ROW_HEIGHT_PX / pixelRatio);
+    return row < 0 || row >= userRows.length || col < 0 || col >= userCols.length
+      ? null
+      : elementFromParentList({ type: "cell", col, row }, { type: "row", row }, { type: "root" });
   }
 }

@@ -1,5 +1,6 @@
 import { order } from "../utils/numberUtils";
 import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "./const";
+import { query } from "./query";
 import { row_t, TableState } from "./types";
 
 export function mouseModule(table: TableState) {
@@ -14,9 +15,15 @@ export function mouseModule(table: TableState) {
   };
 
   contentElement.addEventListener("mousemove", (evt) => {
-    const cell = getCell(evt);
-    if (cell !== null) {
-      contentElement.setAttribute("title", `Cell_${cell.row}_${cell.col}`);
+    let iter = query(table, evt.clientX, evt.clientY);
+    while (iter !== null) {
+      switch (iter.data.type) {
+        case "cell":
+          contentElement.setAttribute("title", `Cell_${iter.data.row}_${iter.data.col}`);
+          return;
+      }
+
+      iter = iter.parent;
     }
   });
 
@@ -43,18 +50,24 @@ export function mouseModule(table: TableState) {
   }
 
   contentElement.addEventListener("mousedown", (evt) => {
-    if (evt.button === 0) {
-      const cell = getCell(evt);
-      if (cell !== null) {
-        table.selection = new Set([cell.row]);
-        drag = { startRow: cell.row };
-        table.onInvalidate.emit();
+    let iter = query(table, evt.clientX, evt.clientY);
+    while (iter !== null) {
+      switch (iter.data.type) {
+        case "cell":
+          if (evt.button === 0) {
+            table.selection = new Set([iter.data.row]);
+            drag = { startRow: iter.data.row };
+            table.onInvalidate.emit();
 
-        document.addEventListener("mousemove", onMouseMoveWhileDown);
-        document.addEventListener("mouseup", () => {
-          document.removeEventListener("mousemove", onMouseMoveWhileDown);
-        });
+            document.addEventListener("mousemove", onMouseMoveWhileDown);
+            document.addEventListener("mouseup", () => {
+              document.removeEventListener("mousemove", onMouseMoveWhileDown);
+            });
+            return;
+          }
       }
+
+      iter = iter.parent;
     }
   });
 }

@@ -46,11 +46,7 @@ export interface IRenderContext {
 }
 
 export class TableElement {
-  constructor(
-    public data: IElementData,
-    public parent: TableElement | null,
-    public localRect: Rect<rendercoord_t>,
-  ) {}
+  constructor(public data: IElementData, public parent: TableElement | null) {}
 }
 
 export type IElementData =
@@ -72,11 +68,12 @@ export type IElementData =
       row: row_t;
     }
   | {
-      type: "top";
+      type: "root";
     };
 
 export interface Layer {
   render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>): void;
+  query(table: TableState, x: rendercoord_t, y: rendercoord_t): TableElement | null;
 }
 
 export interface CellRenderer {

@@ -1,6 +1,7 @@
 import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
 import { col_t, Layer, Rect, rendercoord_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
+import { elementFromParentList } from "../utils/elementUtils";
 import { clamp } from "../utils/numberUtils";
 import { rectContains } from "../utils/renderingUtils";
 
@@ -9,7 +10,7 @@ export class ColHeaderLayer implements Layer {
     const { ctx, userCols, pixelRatio } = table;
     assertNonNullishDEV(ctx);
 
-    if (source.top > ROW_HEIGHT_PX * pixelRatio) {
+    if (source.top >= ROW_HEIGHT_PX * pixelRatio) {
       return;
     }
 
@@ -51,5 +52,13 @@ export class ColHeaderLayer implements Layer {
       ctx.fillStyle = DEFAULT_THEME.colheaderForeground;
       ctx.fillText(String(col), rect.left + 24, 10);
     }
+  }
+
+  public query(table: TableState, x: rendercoord_t, y: rendercoord_t) {
+    const { pixelRatio, userCols } = table;
+    const col: col_t = Math.floor(x / COL_WIDTH_PX / pixelRatio);
+    return y >= ROW_HEIGHT_PX * pixelRatio || col < 0 || col >= userCols.length
+      ? null
+      : elementFromParentList({ type: "colheader", col }, { type: "root" });
   }
 }
