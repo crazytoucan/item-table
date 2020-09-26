@@ -3,9 +3,7 @@ export {
   ICell,
   ICellCallback,
   ICell_Blank,
-  ICell_Image,
   ICell_Text,
-  IItemTableEvent as IDuratableEvent,
+  IItemTableEvent,
   IItemTableEventMap,
-  ITheme,
 } from "./types";

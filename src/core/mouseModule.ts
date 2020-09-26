@@ -1,5 +1,6 @@
+import { upperBound } from '../utils/collectionUtils';
 import { order } from "../utils/numberUtils";
-import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "./const";
+import { ROW_HEIGHT_PX } from "./const";
 import { query } from "./query";
 import { row_t, TableState } from "./types";
 
@@ -7,7 +8,7 @@ export function mouseModule(table: TableState) {
   const { contentElement } = table;
   const getCell = (evt: MouseEvent) => {
     const row = Math.floor((evt.offsetY - ROW_HEIGHT_PX) / ROW_HEIGHT_PX);
-    const col = Math.floor(evt.offsetX / COL_WIDTH_PX);
+    const col = upperBound(table.colsLeft, evt.offsetX * table.pixelRatio);
 
     return row >= 0 && row < table.userRows.length && col >= 0 && col < table.userCols.length
       ? { row, col }

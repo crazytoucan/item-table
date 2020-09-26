@@ -1,6 +1,7 @@
-import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { Cell, col_t, Layer, Rect, rendercoord_t, row_t, TableState } from "../core/types";
+import { DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
+import { Cell, col_t, Layer, Rect, renderspace_t, row_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
+import { upperBound } from "../utils/collectionUtils";
 import { elementFromParentList } from "../utils/elementUtils";
 import { clamp } from "../utils/numberUtils";
 import {
@@ -12,11 +13,19 @@ import {
 } from "../utils/renderingUtils";
 
 export class CellLayer implements Layer {
-  public render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>) {
-    const { ctx, pixelRatio, userRows, userCols, userCellCallback, cellRenderers } = table;
+  public render(table: TableState, source: Rect<renderspace_t>, clean: Rect<renderspace_t>) {
+    const {
+      ctx,
+      pixelRatio,
+      colsLeft,
+      userRows,
+      userCols,
+      userCellCallback,
+      cellRenderers,
+    } = table;
     assertNonNullishDEV(ctx);
 
-    const cellsStartTop: rendercoord_t = ROW_HEIGHT_PX * pixelRatio;
+    const cellsStartTop: renderspace_t = ROW_HEIGHT_PX * pixelRatio;
     const cellsRegion = rectTranslate(
       rectIntersect(source, new Rect(0, cellsStartTop, Infinity, Infinity)),
       0,
@@ -35,14 +44,10 @@ export class CellLayer implements Layer {
       userRows.length - 1,
     );
 
-    const minCol: col_t = clamp(
-      Math.floor(cellsRegion.left / pixelRatio / COL_WIDTH_PX),
-      0,
-      userCols.length - 1,
-    );
+    const minCol: col_t = clamp(upperBound(colsLeft, cellsRegion.left) - 1, 0, userCols.length - 1);
 
     const maxCol: col_t = clamp(
-      Math.ceil((cellsRegion.right - 1) / pixelRatio / COL_WIDTH_PX),
+      upperBound(colsLeft, cellsRegion.right - 1) - 1,
       0,
       userCols.length - 1,
     );
@@ -52,9 +57,9 @@ export class CellLayer implements Layer {
     for (let r: row_t = minRow; r <= maxRow; r++) {
       for (let c: col_t = minCol; c <= maxCol; c++) {
         const cellRect = rectFromExtent(
-          Math.floor(pixelRatio * c * COL_WIDTH_PX),
+          colsLeft[c],
           cellsStartTop + Math.floor(pixelRatio * r * ROW_HEIGHT_PX),
-          Math.floor(pixelRatio * (c + 1) * COL_WIDTH_PX),
+          colsLeft[c + 1],
           cellsStartTop + Math.floor(pixelRatio * (r + 1) * ROW_HEIGHT_PX),
         );
 
@@ -79,11 +84,8 @@ export class CellLayer implements Layer {
     for (const renderer of cellRenderers) {
       try {
         renderer.render(
+          table,
           cells.filter((c) => c.value.kind === renderer.cellKind),
-          {
-            ctx,
-            pixelRatio,
-          },
         );
       } catch (e) {
         // tslint:disable-next-line:no-console
@@ -94,10 +96,10 @@ export class CellLayer implements Layer {
     ctx.restore();
   }
 
-  public query(table: TableState, x: rendercoord_t, y: rendercoord_t) {
-    const { userCols, userRows, pixelRatio } = table;
-    const cellsStartTop: rendercoord_t = ROW_HEIGHT_PX * pixelRatio;
-    const col: col_t = Math.floor(x / COL_WIDTH_PX / pixelRatio);
+  public query(table: TableState, x: renderspace_t, y: renderspace_t) {
+    const { colsLeft, userCols, userRows, pixelRatio } = table;
+    const cellsStartTop: renderspace_t = ROW_HEIGHT_PX * pixelRatio;
+    const col: col_t = upperBound(colsLeft, x) - 1;
     const row: row_t = Math.floor((y - cellsStartTop) / ROW_HEIGHT_PX / pixelRatio);
     return row < 0 || row >= userRows.length || col < 0 || col >= userCols.length
       ? null

@@ -1,7 +1,7 @@
 import { ROW_HEIGHT_PX } from "./const";
-import { csscoord_t, TableElement, TableState } from "./types";
+import { cssspace_t, TableElement, TableState } from "./types";
 
-export function query(table: TableState, cssX: csscoord_t, cssY: csscoord_t): TableElement | null {
+export function query(table: TableState, cssX: cssspace_t, cssY: cssspace_t): TableElement | null {
   const frozenHeight = ROW_HEIGHT_PX;
   const virtualX = cssX * table.pixelRatio + table.scrollLeft * table.pixelRatio;
   const virtualY =

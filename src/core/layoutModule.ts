@@ -1,19 +1,35 @@
-import { COL_WIDTH_PX, ROW_HEIGHT_PX } from "./const";
-import { TableState } from "./types";
 import { setStyle } from "../utils/htmlUtils";
+import { ROW_HEIGHT_PX } from "./const";
+import { renderspace_t, TableState } from "./types";
 
-export function layoutModule(t: TableState) {
+function computeRenderspaceLayout(table: TableState) {
+  if (table.colsLeft.length !== table.userCols.length + 1) {
+    table.colsLeft = new Int32Array(table.userCols.length + 1);
+  }
+
+  const { userCols, colsLeft, pixelRatio, userColWidths } = table;
+  let x: renderspace_t = 0;
+  for (let i = 0, len = userCols.length; i < len; i++) {
+    const widthPx = userColWidths.get(userCols[i]) ?? 80;
+    colsLeft[i] = Math.floor(x);
+    x += widthPx * pixelRatio;
+  }
+
+  colsLeft[userCols.length] = Math.floor(x);
+}
+
+export function layoutModule(table: TableState) {
   const observer = new ResizeObserver(() => {
-    t.onResize.emit();
+    table.onResize.emit();
   });
 
-  setStyle(t.contentElement, {
+  setStyle(table.contentElement, {
     position: "absolute",
     top: "0",
     left: "0",
   });
 
-  setStyle(t.canvasContainerElement, {
+  setStyle(table.canvasContainerElement, {
     position: "sticky",
     left: "0",
     top: "0",
@@ -22,62 +38,64 @@ export function layoutModule(t: TableState) {
     overflow: "hidden",
   });
 
-  setStyle(t.canvasElement, {
+  setStyle(table.canvasElement, {
     pointerEvents: "none",
   });
 
-  t.canvasContainerElement.appendChild(t.canvasElement);
+  table.canvasContainerElement.appendChild(table.canvasElement);
 
   function onScroll() {
-    t.scrollLeft = t.containerElement.scrollLeft;
-    t.scrollTop = t.containerElement.scrollTop;
-    t.onDirty.emit();
+    table.scrollLeft = table.containerElement.scrollLeft;
+    table.scrollTop = table.containerElement.scrollTop;
+    table.onDirty.emit();
   }
 
-  t.onStart.add(() => {
-    t.containerElement.addEventListener("scroll", onScroll);
-    observer.observe(t.containerElement);
-    t.containerElement.appendChild(t.canvasContainerElement);
-    t.containerElement.appendChild(t.contentElement);
+  table.onStart.add(() => {
+    table.containerElement.addEventListener("scroll", onScroll);
+    observer.observe(table.containerElement);
+    table.containerElement.appendChild(table.canvasContainerElement);
+    table.containerElement.appendChild(table.contentElement);
   });
 
-  t.onBeforeRender.add(() => {
-    t.containerWidth = t.containerElement.clientWidth;
-    t.containerHeight = t.containerElement.clientHeight;
-    t.pixelRatio = devicePixelRatio;
-    setStyle(t.contentElement, {
-      width: `${COL_WIDTH_PX * t.userCols.length}px`,
-      height: `${ROW_HEIGHT_PX * t.userRows.length}px`,
+  table.onBeforeRender.add(() => {
+    table.containerWidth = table.containerElement.clientWidth;
+    table.containerHeight = table.containerElement.clientHeight;
+    table.pixelRatio = devicePixelRatio;
+    computeRenderspaceLayout(table);
+
+    setStyle(table.contentElement, {
+      width: `${table.colsLeft[table.userCols.length] / devicePixelRatio}px`,
+      height: `${ROW_HEIGHT_PX * table.userRows.length}px`,
     });
 
-    const physicalWidth = t.containerWidth * t.pixelRatio;
-    const physicalHeight = t.containerHeight * t.pixelRatio;
+    const physicalWidth = table.containerWidth * table.pixelRatio;
+    const physicalHeight = table.containerHeight * table.pixelRatio;
     if (
-      t.canvasElement.width !== physicalWidth ||
-      t.canvasElement.height !== physicalHeight ||
-      t.canvasElement.clientWidth !== t.containerWidth ||
-      t.canvasElement.clientHeight !== t.containerHeight
+      table.canvasElement.width !== physicalWidth ||
+      table.canvasElement.height !== physicalHeight ||
+      table.canvasElement.clientWidth !== table.containerWidth ||
+      table.canvasElement.clientHeight !== table.containerHeight
     ) {
-      t.canvasElement.width = physicalWidth;
-      t.canvasElement.height = physicalHeight;
-      setStyle(t.canvasElement, {
-        width: `${t.containerWidth}px`,
-        height: `${t.containerHeight}px`,
+      table.canvasElement.width = physicalWidth;
+      table.canvasElement.height = physicalHeight;
+      setStyle(table.canvasElement, {
+        width: `${table.containerWidth}px`,
+        height: `${table.containerHeight}px`,
       });
 
-      t.ctx = null;
-      t.onInvalidate.emit();
+      table.ctx = null;
+      table.onInvalidate.emit();
     }
 
-    if (t.ctx === null) {
-      t.ctx = t.canvasElement.getContext("2d", { alpha: false });
+    if (table.ctx === null) {
+      table.ctx = table.canvasElement.getContext("2d", { alpha: false });
     }
   });
 
-  t.onDispose.add(() => {
-    t.canvasContainerElement.remove();
-    t.contentElement.remove();
+  table.onDispose.add(() => {
+    table.canvasContainerElement.remove();
+    table.contentElement.remove();
     observer.disconnect();
-    t.containerElement.removeEventListener("scroll", onScroll);
+    table.containerElement.removeEventListener("scroll", onScroll);
   });
 }

@@ -1,17 +1,17 @@
 import { assertEqualsDEV, assertNonNullishDEV } from "../utils/assertUtils";
 import { rectEmpty, rectIntersect } from "../utils/renderingUtils";
-import { Rect, rendercoord_t, TableState } from "./types";
+import { Rect, renderspace_t, TableState } from "./types";
 
 export class Pane {
-  private lastDest: Rect<rendercoord_t> = rectEmpty();
-  private lastSource: Rect<rendercoord_t> = rectEmpty();
+  private lastDest: Rect<renderspace_t> = rectEmpty();
+  private lastSource: Rect<renderspace_t> = rectEmpty();
 
   invalidate() {
     this.lastSource = rectEmpty();
     this.lastDest = rectEmpty();
   }
 
-  draw(table: TableState, source: Rect<rendercoord_t>, dest: Rect<rendercoord_t>) {
+  draw(table: TableState, source: Rect<renderspace_t>, dest: Rect<renderspace_t>) {
     const { ctx } = table;
     assertNonNullishDEV(ctx);
 
@@ -30,14 +30,14 @@ export class Pane {
 
   private transferExistingPixelsIfPossible(
     table: TableState,
-    source: Rect<rendercoord_t>,
-    dest: Rect<rendercoord_t>,
+    source: Rect<renderspace_t>,
+    dest: Rect<renderspace_t>,
   ) {
     const { canvasElement, ctx } = table;
     assertEqualsDEV(source.width, dest.width);
     assertEqualsDEV(source.height, dest.height);
 
-    const cleanRect: Rect<rendercoord_t> = rectIntersect(this.lastSource, source);
+    const cleanRect: Rect<renderspace_t> = rectIntersect(this.lastSource, source);
     assertNonNullishDEV(ctx);
 
     if (cleanRect.width > 0 && cleanRect.height > 0) {

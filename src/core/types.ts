@@ -3,10 +3,9 @@ import { ColHeaderLayer } from "../renderers/ColHeaderLayer";
 import { TextCellRenderer } from "../renderers/TextCellRenderer";
 import { ICellCallback } from "../types";
 import { Hook } from "../utils/Hook";
-import { DEFAULT_FONT_METRICS, DEFAULT_THEME } from "./const";
 
-export type csscoord_t = number;
-export type rendercoord_t = number;
+export type cssspace_t = number;
+export type renderspace_t = number;
 export type row_t = number;
 export type col_t = number;
 
@@ -15,21 +14,23 @@ export class TableState {
 
   public canvasContainerElement = document.createElement("div");
   public canvasElement = document.createElement("canvas");
-  public cellRenderers = [new TextCellRenderer(DEFAULT_THEME, DEFAULT_FONT_METRICS)];
-  public containerHeight: csscoord_t = 0;
-  public containerWidth: csscoord_t = 0;
+  public cellRenderers = [new TextCellRenderer()];
+  public containerHeight: cssspace_t = 0;
+  public containerWidth: cssspace_t = 0;
   public contentElement = document.createElement("div");
   public ctx: CanvasRenderingContext2D | null = null;
   public layers: Layer[] = [new CellLayer(), new ColHeaderLayer()];
   public pixelRatio = 0;
-  public scrollLeft: csscoord_t = 0;
-  public scrollTop: csscoord_t = 0;
+  public scrollLeft: cssspace_t = 0;
+  public scrollTop: cssspace_t = 0;
   public selection = new Set<number>([3]);
   public userCellCallback: ICellCallback<unknown, unknown> = () => ({ kind: "blank" });
   public userCols: string[] = [];
   public userRows: string[] = [];
-  public virtualHeight: rendercoord_t = 0;
-  public virtualWidth: rendercoord_t = 0;
+  public virtualHeight: renderspace_t = 0;
+  public virtualWidth: renderspace_t = 0;
+  public colsLeft = new Int32Array(); // renderspace_t
+  public userColWidths = new Map<string, cssspace_t>([["3", 180]]);
 
   public onDirty = new Hook();
   public onInvalidate = new Hook();
@@ -72,13 +73,13 @@ export type IElementData =
     };
 
 export interface Layer {
-  render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>): void;
-  query(table: TableState, x: rendercoord_t, y: rendercoord_t): TableElement | null;
+  render(table: TableState, source: Rect<renderspace_t>, clean: Rect<renderspace_t>): void;
+  query(table: TableState, x: renderspace_t, y: renderspace_t): TableElement | null;
 }
 
 export interface CellRenderer {
   cellKind: string;
-  render(cells: Cell[], context: IRenderContext): void;
+  render(table: TableState, cells: Cell[]): void;
 }
 
 export class Cell {

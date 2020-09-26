@@ -1,13 +1,14 @@
-import { COL_WIDTH_PX, DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
-import { col_t, Layer, Rect, rendercoord_t, TableState } from "../core/types";
+import { DEFAULT_THEME, ROW_HEIGHT_PX } from "../core/const";
+import { col_t, Layer, Rect, renderspace_t, TableState } from "../core/types";
 import { assertNonNullishDEV } from "../utils/assertUtils";
+import { upperBound } from '../utils/collectionUtils';
 import { elementFromParentList } from "../utils/elementUtils";
 import { clamp } from "../utils/numberUtils";
 import { rectContains } from "../utils/renderingUtils";
 
 export class ColHeaderLayer implements Layer {
-  public render(table: TableState, source: Rect<rendercoord_t>, clean: Rect<rendercoord_t>) {
-    const { ctx, userCols, pixelRatio } = table;
+  public render(table: TableState, source: Rect<renderspace_t>, clean: Rect<renderspace_t>) {
+    const { colsLeft, ctx, userCols, pixelRatio } = table;
     assertNonNullishDEV(ctx);
 
     if (source.top >= ROW_HEIGHT_PX * pixelRatio) {
@@ -15,13 +16,13 @@ export class ColHeaderLayer implements Layer {
     }
 
     const minCol: col_t = clamp(
-      Math.floor(source.left / pixelRatio / COL_WIDTH_PX),
+      upperBound(colsLeft, source.left) - 1,
       0,
       userCols.length - 1,
     );
 
     const maxCol: col_t = clamp(
-      Math.ceil((source.right - 1) / pixelRatio / COL_WIDTH_PX),
+      upperBound(colsLeft, source.right - 1) - 1,
       0,
       userCols.length - 1,
     );
@@ -32,11 +33,10 @@ export class ColHeaderLayer implements Layer {
     }'`;
 
     for (let col: col_t = minCol; col <= maxCol; col++) {
-      const left = col * COL_WIDTH_PX * pixelRatio;
-      const rect = new Rect<rendercoord_t>(
-        left,
+      const rect = new Rect<renderspace_t>(
+        colsLeft[col],
         0,
-        COL_WIDTH_PX * pixelRatio,
+        colsLeft[col + 1] - colsLeft[col],
         ROW_HEIGHT_PX * pixelRatio,
       );
 
@@ -54,9 +54,9 @@ export class ColHeaderLayer implements Layer {
     }
   }
 
-  public query(table: TableState, x: rendercoord_t, y: rendercoord_t) {
-    const { pixelRatio, userCols } = table;
-    const col: col_t = Math.floor(x / COL_WIDTH_PX / pixelRatio);
+  public query(table: TableState, x: renderspace_t, y: renderspace_t) {
+    const { colsLeft, pixelRatio, userCols } = table;
+    const col: col_t = upperBound(colsLeft, x) - 1;
     return y >= ROW_HEIGHT_PX * pixelRatio || col < 0 || col >= userCols.length
       ? null
       : elementFromParentList({ type: "colheader", col }, { type: "root" });

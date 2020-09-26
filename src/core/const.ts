@@ -1,6 +1,5 @@
 import FontMetrics from "fontmetrics";
 
-export const COL_WIDTH_PX = 120;
 export const ROW_HEIGHT_PX = 19;
 export const DEFAULT_THEME = {
   cellPaddingBottom: 3,
@@ -19,7 +18,7 @@ export const DEFAULT_THEME = {
   fontSize: 11,
   fontWeight: 400,
   fontString: "400 12px 'system-ui'",
-  lineHeight: 1.15,
+  lineHeight: 1.1,
 };
 
 export const DEFAULT_FONT_METRICS = FontMetrics({
