@@ -58,11 +58,14 @@ export class CellLayer implements ILayer {
 
         if (!rectContains(clean, cellRect)) {
           const selected = table.selection.has(r);
+          const rowStripeColor = parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
           ctx.fillStyle = selected
             ? DEFAULT_THEME.selectionColor
-            : parity(r, DEFAULT_THEME.rowEvenBackground, DEFAULT_THEME.rowOddBackground);
+            : rowStripeColor;
 
           ctx.fillRect(cellRect.left, cellRect.top, cellRect.width, cellRect.height);
+          ctx.fillStyle = rowStripeColor;
+          ctx.fillRect(cellRect.left, cellRect.bottom - 2, cellRect.width, 2);
           cells.push(new Cell(r, c, cellCallback(rows[r], cols[c])));
         }
       }
@@ -79,6 +82,7 @@ export class CellLayer implements ILayer {
           },
         );
       } catch (e) {
+        // tslint:disable-next-line:no-console
         console.error(e);
       }
     }
